@@ -3,12 +3,12 @@ name: Deploy to Cloud Run
 env:
   SERVICE_NAME: nutriai-api
   PROJECT_ID: nutri-ai-463621
-  DOCKER_IMAGE_URL: gcr.io/${{ env.PROJECT_ID }}/github.com/Nutri-AI-TCC/nutriai-api
+  DOCKER_IMAGE_URL: gcr.io/nutri-ai-463621/github.com/Nutri-AI-TCC/nutriai-api
 
 on:
   push:
     branches:
-      - main # Garante que só dispara em push na branch main
+      - main
 
 jobs:
   dockerize-and-deploy:
@@ -22,7 +22,7 @@ jobs:
         uses: 'google-github-actions/auth@v2'
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'
-          project_id: ${{ env.PROJECT_ID }}
+          project_id: ${{ env.PROJECT_ID }} # Aqui o uso de ${{ env.PROJECT_ID }} está correto, pois está dentro de um "with" de um step.
 
       - name: Set up Cloud SDK
         uses: 'google-github-actions/setup-gcloud@v2'
