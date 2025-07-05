@@ -3,7 +3,7 @@ name: Deploy to Cloud Run
 env:
   SERVICE_NAME: nutriai-api
   PROJECT_ID: nutri-ai-463621
-  DOCKER_IMAGE_URL: gcr.io/nutri-ai-463621/github.com/Nutri-AI-TCC/nutriai-api
+  DOCKER_IMAGE_URL: gcr.io/nutri-ai-463621/github.com/nutri-ai-tcc/nutriai-api
 
 on:
   push:
