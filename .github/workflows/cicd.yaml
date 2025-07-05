@@ -49,5 +49,5 @@ jobs:
           gcloud run deploy ${{ env.SERVICE_NAME }} \
             --image ${{ env.DOCKER_IMAGE_URL }}:latest \
             --platform managed \
-            --region southamerica-east1 \ 
+            --region southamerica-east1 \
             --allow-unauthenticated
