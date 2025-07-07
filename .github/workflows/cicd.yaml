@@ -26,8 +26,11 @@ jobs:
       - name: Set up Cloud SDK
         uses: 'google-github-actions/setup-gcloud@v2'
 
-      - name: Configure Docker
-        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+      - name: Configure Docker (Explicit Login)
+        run: |
+            gcloud auth print-access-token | docker login \
+              -u oauth2accesstoken \
+              --password-stdin https://${{ env.REGION }}-docker.pkg.dev
 
 
       - name: Set environment-specific names
