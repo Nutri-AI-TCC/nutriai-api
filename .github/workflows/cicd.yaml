@@ -1,14 +1,14 @@
 name: Deploy to Cloud Run
 
 env:
-  SERVICE_NAME: nutriai-api
   PROJECT_ID: nutri-ai-463621
-  DOCKER_IMAGE_URL: gcr.io/nutri-ai-463621/github.com/nutri-ai-tcc/nutriai-api
+  REGION: southamerica-east1
 
 on:
   push:
     branches:
       - main
+      - develop
 
 jobs:
   dockerize-and-deploy:
@@ -16,38 +16,46 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Google Cloud Auth
         uses: 'google-github-actions/auth@v2'
         with:
           credentials_json: '${{ secrets.NUTRIELLEN_KEY }}'
-          project_id: ${{ env.PROJECT_ID }}
-          create_credentials_file: true
-          export_environment_variables: true
-          universe: googleapis.com
-          cleanup_credentials: true
-          access_token_lifetime: 3600s
-          access_token_scopes: https://www.googleapis.com/auth/cloud-platform
-          id_token_include_email: false
 
       - name: Set up Cloud SDK
         uses: 'google-github-actions/setup-gcloud@v2'
 
       - name: Configure Docker
         run: |
-          gcloud auth configure-docker 
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev 
+
+      - name: Set environment-specific names
+        run: |
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            echo "SERVICE_NAME=nutriai-api" >> $GITHUB_ENV
+            echo "IMAGE_NAME=nutriai-api" >> $GITHUB_ENV
+          elif [[ "${{ github.ref_name }}" == "develop" ]]; then
+            echo "SERVICE_NAME=nutriai-api-develop" >> $GITHUB_ENV
+            echo "IMAGE_NAME=nutriai-api-develop" >> $GITHUB_ENV
+          fi
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ env.DOCKER_IMAGE_URL }}:latest -f Dockerfile .
-          docker push ${{ env.DOCKER_IMAGE_URL }}:latest
+          IMAGE_TAG=$(git rev-parse --short "$GITHUB_SHA")
+          FULL_IMAGE_URL="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${IMAGE_TAG}"
+          
+          docker build -t "$FULL_IMAGE_URL" -f Dockerfile .
+          docker push "$FULL_IMAGE_URL"
 
       - name: Deploy to Cloud Run
         run: |
+          IMAGE_TAG=$(git rev-parse --short "$GITHUB_SHA")
+          FULL_IMAGE_URL="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${IMAGE_TAG}"
+          
           echo "Deploying service ${{ env.SERVICE_NAME }}..."
           gcloud run deploy ${{ env.SERVICE_NAME }} \
-            --image ${{ env.DOCKER_IMAGE_URL }}:latest \
+            --image "$FULL_IMAGE_URL" \
             --platform managed \
-            --region southamerica-east1 \
+            --region ${{ env.REGION }} \
             --allow-unauthenticated
