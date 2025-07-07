@@ -27,34 +27,48 @@ jobs:
         uses: 'google-github-actions/setup-gcloud@v2'
 
       - name: Configure Docker
-        run: |
-          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev 
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+
 
       - name: Set environment-specific names
+        id: names
         run: |
           if [[ "${{ github.ref_name }}" == "main" ]]; then
-            echo "SERVICE_NAME=nutriai-api" >> $GITHUB_ENV
-            echo "IMAGE_NAME=nutriai-api" >> $GITHUB_ENV
+            echo "SERVICE_NAME=nutriai-api" >> $GITHUB_OUTPUT
+            echo "IMAGE_NAME=nutriai-api" >> $GITHUB_OUTPUT
           elif [[ "${{ github.ref_name }}" == "develop" ]]; then
-            echo "SERVICE_NAME=nutriai-api-develop" >> $GITHUB_ENV
-            echo "IMAGE_NAME=nutriai-api-develop" >> $GITHUB_ENV
+            echo "SERVICE_NAME=nutriai-api-develop" >> $GITHUB_OUTPUT
+            echo "IMAGE_NAME=nutriai-api-develop" >> $GITHUB_OUTPUT
           fi
+
+
+      - name: Debug Variables
+        run: |
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Service Name from outputs: ${{ steps.names.outputs.SERVICE_NAME }}"
+          echo "Image Name from outputs: ${{ steps.names.outputs.IMAGE_NAME }}"
+
 
       - name: Build and Push Docker Image
         run: |
           IMAGE_TAG=$(git rev-parse --short "$GITHUB_SHA")
-          FULL_IMAGE_URL="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${IMAGE_TAG}"
-          
+          FULL_IMAGE_URL="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ steps.names.outputs.IMAGE_NAME }}:${IMAGE_TAG}"
+
+          echo "---"
+          echo "Final Image URL to be built and pushed: $FULL_IMAGE_URL"
+          echo "---"
+
           docker build -t "$FULL_IMAGE_URL" -f Dockerfile .
           docker push "$FULL_IMAGE_URL"
+      
 
       - name: Deploy to Cloud Run
         run: |
           IMAGE_TAG=$(git rev-parse --short "$GITHUB_SHA")
-          FULL_IMAGE_URL="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${IMAGE_TAG}"
-          
-          echo "Deploying service ${{ env.SERVICE_NAME }}..."
-          gcloud run deploy ${{ env.SERVICE_NAME }} \
+          FULL_IMAGE_URL="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ steps.names.outputs.IMAGE_NAME }}:${IMAGE_TAG}"
+
+          echo "Deploying to service ${{ steps.names.outputs.SERVICE_NAME }}..."
+          gcloud run deploy ${{ steps.names.outputs.SERVICE_NAME }} \
             --image "$FULL_IMAGE_URL" \
             --platform managed \
             --region ${{ env.REGION }} \
