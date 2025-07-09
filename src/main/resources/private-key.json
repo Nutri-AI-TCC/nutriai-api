@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "nutri-ai-463621",
+  "private_key_id": "ca3030884c6690dd4eb78ed2d157cc601da81a67",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCwOn7LZRCze0sV\nhAz4pchSmGsMFDhOdnsI2rBN0RDWuFUvR93Pa6BaTvMqTqxDsI9GPvgpXnCYDb2w\nQbVNoRALgEVT7WZR3vvMp3b11MRhLvAECjpkVwekH9RPaURsWZ0ypPVkmvnpKQEl\nlmYJiYYdTaHuJ15D9sLyMAcgcMeHu3TReUL+vFU2GKutldezdpjMWirUePSPIxJh\nZlk9eIaCKRawux3MW33H1sTZS55t6TVA5AqeNjj81zM34B+aPwK7yA9FEheFQmbg\nHznjRvkiqxSI+xLDB+H8ci624NIzVU9Yi4NDJyDomGivKO8b4nWrU0NO5xJISGg0\nRiJhJaRnAgMBAAECggEAP5TLPFz5WpgoLdoXx/ogPVSKgrAk5IIwv7APHfRJC/8z\nlLxsFbLyBsMnTmNWGZHxD1oWtO5C10lV3+rFG/35SPz9hltHqFA4Ls1YyTb7p0iF\nBiAekycnNZraQdBsBF+MrMIBW0vi0LGfnU0XAWfhwF7LBp6jjwfPrAuR9q1Z/+kT\nxl6uQSG4X962M2r4SuL/EEiHrnmgdCmWMVbpeCVMrfJHHtl6Mdhq8wOkF8le5iuo\nniG/Yw3nlHpJ63IYoVc1zuIS6v/iuo3czkoplU4W7Jeg21HUvYzKgRwg7TDMlbFd\nymjKTX+mKOimNHPW4yJlTMIjMHx37S3uXDBCYjKDoQKBgQDdTCq/netcF6q8Ke9J\ns/+6yjuSUKwx/hNTN1SYM1UYLf+KAeSQj1pOiwwxpd0NGYML856gH6UJ7QYe4sjH\nk5OHgFHa9Y1I7QlMoCSFIzNwE8DOYFM4YKUe7J2XgMBxWMZtawupL06p1Gm8O/pf\nMEWVhc24wlpj/06oMJdn5r1OMQKBgQDL3RBcS6Dlhtpl2ZTHumATyvjdXMxe++Df\npUQ7EWfbuyW83ymajUHVad4mEqSu+ny3Q+mvhHm0VfGDIwnlaJ8rcAm7jvHCmsWT\nmF6pGz3a27hQdKcHkkGWiEAOpj24r7TFaY696fJCITK+R9SyKnWaHfh6rlU4rV0D\n6HUMPL/+FwKBgQCqX7GpxNMnG7F/HGn1vHbuQDSM+T8ZXhtSvg6K/zpMW12ZystF\n4JgOUE8bCi+dnj6ePPmrHbHaanmD3eXmgV/bupdKlDIqKxQ1wjVbqzY2235dZRut\nE/sMS+8obR+8JDTgmMFph9pwNfER0rt3/ZoU++bekAM3aaANLRvkCmlEgQKBgQCj\nDs9eMzOfQqx+2HhzBDSCwE8rp2Tj+C0WVPbtE+/xRZBasFhzgNaOX15LL5A/UKTe\nZNiOBbTes/s3e5gXwQXG1ZdDSINAt1CezDmyotJnsmSLHbLXkHkbcSFjVj558Tfy\nyopchrm5gRo4LfYHB4UG3z/2yGfrrGaAkLbGMfUSwwKBgQCTs2GmrG03YvdHzCGp\n0PN6xlqpo2CYBUMQWXXh1gulvOQqRfgFD5pvvMaZjIh9rFFwa5raFeXm92UsgzJf\n2YRQUj3xSlGt/0t3bPzmhpvLV7gIjXaPrbS2uQs4G+vEhrJgUS/vCt3TyPCvdrqk\n1EVspaNe5mN9HIl35hin7RIJyg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-fbsvc@nutri-ai-463621.iam.gserviceaccount.com",
+  "client_id": "117433135985653845009",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40nutri-ai-463621.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
