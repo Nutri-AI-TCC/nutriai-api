@@ -1,4 +1,4 @@
-package com.nutriai.api.dto;
+package com.nutriai.api.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

@@ -3,18 +3,27 @@ package com.nutriai.api.service;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
+import com.nutriai.api.client.FirebaseAuthClient;
+import com.nutriai.api.dto.auth.FirebaseSignInResponse;
 import com.nutriai.api.exception.AccountAlreadyExistsException;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
+
+
+/** * Classe de serviço que orquestra as operações relacionadas à autenticação de usuários.
+ sendo responsável por interagir com os componentes do Firebase para criar e logar usuários. */
+
 
 @Service
 public class UserService {
 
     private final FirebaseAuth firebaseAuth;
+    private final FirebaseAuthClient firebaseAuthClient;
 
-    public UserService(FirebaseAuth firebaseAuth) {
+    public UserService(FirebaseAuth firebaseAuth, FirebaseAuthClient firebaseAuthClient) {
         this.firebaseAuth = firebaseAuth;
+        this.firebaseAuthClient = firebaseAuthClient;
     }
+
 
     private static final String DUPLICATE_ACCOUNT_ERROR = "EMAIL_EXISTS";
 
@@ -32,5 +41,13 @@ public class UserService {
             }
             throw exception;
         }
+
     }
+
+
+    public FirebaseSignInResponse login(String email, String password) {
+        return firebaseAuthClient.login(email, password);
+    }
+
+
 }

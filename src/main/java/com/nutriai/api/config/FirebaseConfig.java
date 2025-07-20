@@ -13,6 +13,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Classe de configuração central e básica para a integração com o Firebase.
+ * Responsável por inicializar a SDK do Firebase Admin e criar os beans
+ * necessários para interagir com os serviços do Firebase Authentication.
+ */
+
+
 @Configuration
 public class FirebaseConfig {
 
