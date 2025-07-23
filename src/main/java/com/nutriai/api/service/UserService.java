@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 import com.nutriai.api.client.FirebaseAuthClient;
 import com.nutriai.api.dto.auth.FirebaseSignInResponse;
+import com.nutriai.api.dto.auth.RefreshTokenResponse;
 import com.nutriai.api.exception.AccountAlreadyExistsException;
 import org.springframework.stereotype.Service;
 
@@ -48,6 +49,12 @@ public class UserService {
     public FirebaseSignInResponse login(String email, String password) {
         return firebaseAuthClient.login(email, password);
     }
+
+
+    public RefreshTokenResponse exchangeRefreshToken(String refreshToken) {
+        return firebaseAuthClient.exchangeRefreshToken(refreshToken);
+    }
+
 
 
 }
