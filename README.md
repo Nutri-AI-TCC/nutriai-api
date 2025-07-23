@@ -1,4 +1,5 @@
 NutriAI API 🍏
+
 API backend para a plataforma NutriAI, projetada para atender nutricionistas no gerenciamento de seus pacientes. O projeto utiliza Spring Boot para a construção de uma API RESTful robusta e Firebase Authentication como provedor de identidade.
 
 📝 Índice
