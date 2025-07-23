@@ -53,9 +53,9 @@ Antes de começar, você precisará ter as seguintes ferramentas instaladas em s
 Siga os passos abaixo para rodar o projeto localmente.
 
 ### 1. Clone o Repositório
-```bash
-git clone <url-do-seu-repositorio>
-cd nutriai-api
+bash
+`git clone <url-do-seu-repositorio>
+cd nutriai-api`
 
 2. Configure o Firebase
 Você precisará de duas chaves do seu projeto Firebase.
