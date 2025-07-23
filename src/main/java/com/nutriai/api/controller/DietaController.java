@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/dieta")
+@RequestMapping("/api/v1/dietas")
 public class DietaController {
 
     private final DietaService dietaService;

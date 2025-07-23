@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Inclui o registro e o login. */
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/v1/auth")
 public class UserController {
 
     private final UserService userService;
