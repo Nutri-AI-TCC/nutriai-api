@@ -103,7 +103,7 @@ mvn clean install`
 mvn spring-boot:run
 A API estará rodando em http://localhost:8080.`
 
-### 🕹️ Uso da API
+## 🕹️ Uso da API
 Recomenda-se o uso do Postman para testar os endpoints.
 
 Endpoints Públicos (Autenticação)
