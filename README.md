@@ -164,7 +164,7 @@ Resposta de Sucesso (200 OK): Uma lista de dietas (ex: [] se estiver vazia).
 Resposta de Falha (sem token): 401 Unauthorized.
 
 
-### ⏭️ Próximos Passos
+## ⏭️ Próximos Passos
 [ ] Implementar a lógica de negócio no DietaService.
 
 [ ] Desenvolver os endpoints de CRUD para Pacientes, que também serão rotas protegidas.
