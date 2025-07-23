@@ -94,14 +94,14 @@ com.nutriai.firebase.web-api-key=<SUA_CHAVE_API_AQUI>
 
 
 ### 3. Compile e Rode a Aplicação
+
 Bash
+`# Compile o projeto e baixe as dependências
+mvn clean install`
 
-# Compile o projeto e baixe as dependências
-mvn clean install
-
-# Rode a aplicação
+`# Rode a aplicação
 mvn spring-boot:run
-A API estará rodando em http://localhost:8080.
+A API estará rodando em http://localhost:8080.`
 
 ### 🕹️ Uso da API
 Recomenda-se o uso do Postman para testar os endpoints.
