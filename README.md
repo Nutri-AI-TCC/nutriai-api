@@ -54,8 +54,9 @@ Siga os passos abaixo para rodar o projeto localmente.
 
 ### 1. Clone o Repositório
 ```bash
-git clone [https://github.com/Nutri-AI-TCC/nutriai-api.git](https://github.com/Nutri-AI-TCC/nutriai-api.git)
+git clone https://github.com/Nutri-AI-TCC/nutriai-api.git
 cd nutriai-api
+ ```
 
 
 ### 2. Configure o Firebase
@@ -88,7 +89,7 @@ mvn clean install
 
 # Rode a aplicação
 mvn spring-boot:run
-
+ ```
 
 
 ## 🕹️ Documentação da API (Endpoints)
@@ -118,6 +119,7 @@ Este endpoint cria uma nova conta de usuário (nutricionista) no sistema.
   "email": "nutricionista.novo@email.com",
   "password": "senhaForte123"
 }
+ ```
 
 #### Respostas
 
@@ -165,6 +167,7 @@ Este endpoint autentica um usuário com e-mail e senha e retorna tokens de acess
   "email": "nutricionista.novo@email.com",
   "password": "senhaForte123"
 }
+ ```
 
 #### Respostas
 
@@ -208,6 +211,7 @@ Este endpoint troca um `refreshToken` válido por um novo `idToken`.
 {
   "refreshToken": "AMf-vBw...o-token-recebido-no-login"
 }
+ ```
 
 #### Respostas
 
