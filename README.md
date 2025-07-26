@@ -1,7 +1,11 @@
 # NutriAI API 🍏
 
-API backend para a plataforma NutriAI, projetada para atender nutricionistas no gerenciamento de seus pacientes. O projeto utiliza Spring Boot para a construção de uma API RESTful robusta e Firebase Authentication como provedor de identidade.
+[![Status do Projeto](https://img.shields.io/badge/status-em--desenvolvimento-yellow)](https://shields.io/)
+[![Java](https://img.shields.io/badge/Java-17-blue.svg)](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Firebase](https://img.shields.io/badge/Firebase-Authentication-orange.svg)](https://firebase.google.com/products/auth)
 
+API backend para a plataforma NutriAI, projetada para atender nutricionistas no gerenciamento de seus pacientes. O projeto utiliza Spring Boot para a construção de uma API RESTful robusta e Firebase Authentication como provedor de identidade.
 
 ## 📝 Índice
 
@@ -9,9 +13,8 @@ API backend para a plataforma NutriAI, projetada para atender nutricionistas no 
 - [Tecnologias Utilizadas](#-tecnologias-utilizadas)
 - [Pré-requisitos](#-pré-requisitos)
 - [Configuração do Ambiente](#-configuração-do-ambiente)
-- [Uso da API](#-uso-da-api)
+- [Documentação da API (Endpoints)](#-documentação-da-api-endpoints)
 - [Próximos Passos](#-próximos-passos)
-  
 
 ## ✨ Funcionalidades
 
@@ -23,7 +26,6 @@ A API implementa um módulo de autenticação completo e seguro, além de endpoi
 - ✅ **Validação de Token JWT**: Um filtro de segurança intercepta todas as requisições para validar o `idToken` do Firebase enviado no cabeçalho `Authorization`.
 - ✅ **Tratamento de Erros Padronizado**: Respostas de erro claras e consistentes para a API (400, 401, 404, 409).
 - ✅ **Validação de Dados**: Validação automática dos dados de entrada nos DTOs.
-  
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -35,7 +37,6 @@ A API implementa um módulo de autenticação completo e seguro, além de endpoi
 - **Maven**: Gerenciador de dependências e build do projeto.
 - **Firebase Admin SDK**: Para integração backend com o Firebase.
 - **Firebase Authentication**: Provedor de identidade para gerenciamento de usuários.
-  
 
 ## 📋 Pré-requisitos
 
@@ -46,122 +47,232 @@ Antes de começar, você precisará ter as seguintes ferramentas instaladas em s
 - Git
 - Uma IDE de sua preferência (IntelliJ, VS Code com extensões Java, Eclipse).
 - Uma conta no Firebase.
-  
 
 ## ⚙️ Configuração do Ambiente
 
 Siga os passos abaixo para rodar o projeto localmente.
 
 ### 1. Clone o Repositório
-bash
-
-`git clone <url-do-seu-repositorio>
-cd nutriai-api`
+```bash
+git clone [https://github.com/Nutri-AI-TCC/nutriai-api.git](https://github.com/Nutri-AI-TCC/nutriai-api.git)
+cd nutriai-api
 
 
 ### 2. Configure o Firebase
 Você precisará de duas chaves do seu projeto Firebase.
 
-a) Obtenha a Chave de Serviço (Service Account Key):
+**a) Obtenha a Chave de Serviço (Service Account Key):**
+1. Acesse o **Console do Firebase** e vá para **Configurações do projeto** (⚙️).
+2. Clique na aba **Contas de serviço**.
+3. Clique no botão **"Gerar nova chave privada"**.
+4. Um arquivo JSON será baixado. Renomeie este arquivo para `private-key.json`.
+5. Mova o arquivo `private-key.json` para a pasta `src/main/resources` do projeto.
 
-Acesse o Console do Firebase e vá para Configurações do projeto (⚙️).
+> **Atenção:** O arquivo `private-key.json` contém credenciais de administrador. **Nunca** o envie para um repositório Git público. Adicione-o ao seu arquivo `.gitignore`.
 
-Clique na aba Contas de serviço.
-
-Clique no botão "Gerar nova chave privada".
-
-Um arquivo JSON será baixado. Renomeie este arquivo para private-key.json.
-
-Mova o arquivo private-key.json para a pasta src/main/resources do projeto.
-
-
-b) Obtenha a Chave da API Web (Web API Key):
-
-Ainda nas Configurações do projeto, vá para a aba Geral.
-
-Em "Seus apps", localize seu aplicativo da Web.
-
-No objeto de configuração firebaseConfig, copie o valor da chave apiKey.
-
-Abra o arquivo src/main/resources/application.properties.
-
-Adicione a seguinte linha, substituindo <SUA_CHAVE_API_AQUI> pela chave que você copiou:
-
-Properties
-
-com.nutriai.firebase.web-api-key=<SUA_CHAVE_API_AQUI>
+**b) Obtenha a Chave da API Web (Web API Key):**
+1. Ainda nas **Configurações do projeto**, vá para a aba **Geral**.
+2. Em **"Seus apps"**, localize seu aplicativo da Web.
+3. No objeto de configuração `firebaseConfig`, copie o valor da chave `apiKey`.
+4. Abra o arquivo `src/main/resources/application.properties`.
+5. Adicione a seguinte linha, substituindo `<SUA_CHAVE_API_AQUI>` pela chave que você copiou:
+   ```properties
+   com.nutriai.firebase.web-api-key=<SUA_CHAVE_API_AQUI>
 
 
 
 ### 3. Compile e Rode a Aplicação
+```bash
+# Compile o projeto e baixe as dependências
+mvn clean install
 
-Bash
-`# Compile o projeto e baixe as dependências
-mvn clean install`
-
-`# Rode a aplicação
+# Rode a aplicação
 mvn spring-boot:run
-A API estará rodando em http://localhost:8080.`
 
-## 🕹️ Uso da API
-Recomenda-se o uso do Postman para testar os endpoints.
 
-Endpoints Públicos (Autenticação)
-1. Registrar um Novo Usuário
-Método: POST
 
-URL: http://localhost:8080/api/v1/auth/register
+## 🕹️ Documentação da API (Endpoints)
 
-Body (raw, JSON):
+A seguir estão detalhados os endpoints disponíveis na NutriAI API.
 
-JSON
+---
 
+### 1. Registrar um Novo Usuário
+
+Este endpoint cria uma nova conta de usuário (nutricionista) no sistema.
+
+-   **Endpoint:** `/api/v1/auth/register`
+-   **Método:** `POST`
+
+#### Requisição
+
+| Atributo      | Descrição                      |
+| :------------ | :----------------------------- |
+| **URL** | `/api/v1/auth/register`        |
+| **Método** | `POST`                         |
+| **Cabeçalhos**| `Content-Type: application/json` |
+
+**Corpo da Requisição:**
+```json
 {
   "email": "nutricionista.novo@email.com",
   "password": "senhaForte123"
 }
-Resposta de Sucesso (201 Created): Usuário registrado com sucesso!
 
-2. Fazer Login
-Método: POST
+#### Respostas
 
-URL: http://localhost:8080/api/v1/auth/login
+-   **`201 Created`** - Se o usuário for criado com sucesso.
+    ```
+    Usuário registrado com sucesso!
+    ```
+-   **`400 Bad Request`** - Se os dados enviados forem inválidos (ex: e-mail em formato incorreto ou senha em branco).
+    ```json
+    {
+      "email": "O formato do e-mail fornecido é inválido."
+    }
+    ```
+-   **`409 Conflict`** - Se o e-mail fornecido já estiver em uso.
+    ```json
+    {
+        "timestamp": "2025-07-26T11:23:50.123456",
+        "status": 409,
+        "error": "Conflito de Recurso",
+        "message": "A conta com o e-mail fornecido já existe.",
+        "path": "/api/v1/auth/register"
+    }
+    ```
 
-Body (raw, JSON):
+---
 
-JSON
+### 2. Autenticar um Usuário (Login)
 
+Este endpoint autentica um usuário com e-mail e senha e retorna tokens de acesso.
+
+-   **Endpoint:** `/api/v1/auth/login`
+-   **Método:** `POST`
+
+#### Requisição
+
+| Atributo      | Descrição                      |
+| :------------ | :----------------------------- |
+| **URL** | `/api/v1/auth/login`           |
+| **Método** | `POST`                         |
+| **Cabeçalhos**| `Content-Type: application/json` |
+
+**Corpo da Requisição:**
+```json
 {
   "email": "nutricionista.novo@email.com",
   "password": "senhaForte123"
 }
-Resposta de Sucesso (200 OK): Copie o idToken para usar nos endpoints protegidos.
 
-JSON
+#### Respostas
 
+-   **`200 OK`** - Se a autenticação for bem-sucedida. O `idToken` deve ser copiado para usar em rotas protegidas.
+    ```json
+    {
+        "idToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6...",
+        "refreshToken": "AMf-vBw..."
+    }
+    ```
+-   **`401 Unauthorized`** - Se as credenciais (e-mail ou senha) forem inválidas.
+    ```json
+    {
+        "timestamp": "2025-07-26T11:23:50.123456",
+        "status": 401,
+        "error": "Não Autorizado",
+        "message": "Credenciais de login inválidas.",
+        "path": "/api/v1/auth/login"
+    }
+    ```
+
+---
+
+### 3. Renovar Token de Acesso
+
+Este endpoint troca um `refreshToken` válido por um novo `idToken`.
+
+-   **Endpoint:** `/api/v1/auth/refresh-token`
+-   **Método:** `POST`
+
+#### Requisição
+
+| Atributo      | Descrição                      |
+| :------------ | :----------------------------- |
+| **URL** | `/api/v1/auth/refresh-token`   |
+| **Método** | `POST`                         |
+| **Cabeçalhos**| `Content-Type: application/json` |
+
+**Corpo da Requisição:**
+```json
 {
-    "idToken": "eyJhbGciOi...",
-    "refreshToken": "AMf-vBw..."
+  "refreshToken": "AMf-vBw...o-token-recebido-no-login"
 }
-Endpoints Protegidos (Exemplo)
-Para acessar qualquer endpoint que não seja /auth/**, você precisa se autenticar.
 
-1. Buscar Todas as Dietas
-Método: GET
+#### Respostas
 
-URL: http://localhost:8080/api/v1/dietas
+-   **`200 OK`** - Se o token for renovado com sucesso.
+    ```json
+    {
+        "id_token": "eyJhbGciOi... (um novo idToken)"
+    }
+    ```
+-   **`401 Unauthorized`** - Se o `refreshToken` for inválido ou expirado.
+    ```json
+    {
+        "timestamp": "2025-07-26T11:23:50.123456",
+        "status": 401,
+        "error": "Não Autorizado",
+        "message": "Refresh token inválido ou expirado.",
+        "path": "/api/v1/auth/refresh-token"
+    }
+    ```
 
-Autenticação:
+---
 
-No Postman, vá para a aba Authorization.
+### 4. Buscar Todas as Dietas (Rota Protegida)
 
-Selecione o tipo Bearer Token.
+Este endpoint de exemplo retorna uma lista de dietas e exige autenticação.
 
-No campo Token, cole o idToken que você recebeu do endpoint de login.
+-   **Endpoint:** `/api/v1/dietas`
+-   **Método:** `GET`
 
-Resposta de Sucesso (200 OK): Uma lista de dietas (ex: [] se estiver vazia).
+#### Requisição
 
-Resposta de Falha (sem token): 401 Unauthorized.
+| Atributo      | Descrição                                         |
+| :------------ | :------------------------------------------------ |
+| **URL** | `/api/v1/dietas`                                  |
+| **Método** | `GET`                                             |
+| **Cabeçalhos**| `Authorization: Bearer <seu_idToken_obtido_no_login>` |
+
+**Corpo da Requisição:**
+- Nenhum
+
+#### Respostas
+
+-   **`200 OK`** - Se o `idToken` for válido.
+    ```json
+    [
+        {
+            "id": 1,
+            "nome": "Dieta de Baixo Carboidrato",
+            "ativo": true
+        },
+        {
+            "id": 2,
+            "nome": "Dieta Mediterrânea",
+            "ativo": true
+        }
+    ]
+    ```
+-   **`401 Unauthorized`** - Se o cabeçalho `Authorization` estiver ausente, ou se o `idToken` for inválido ou expirado.
+    ```json
+    {
+        "title": "User Unauthorized",
+        "status": 401,
+        "detail": "A autenticação falhou: o token está ausente, é inválido ou expirado."
+    }
+    ```
 
 
 ## ⏭️ Próximos Passos
