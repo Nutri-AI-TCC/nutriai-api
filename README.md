@@ -2,7 +2,7 @@
 
 [![Status do Projeto](https://img.shields.io/badge/status-em--desenvolvimento-yellow)](https://shields.io/)
 [![Java](https://img.shields.io/badge/Java-17-blue.svg)](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.3-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Firebase](https://img.shields.io/badge/Firebase-Authentication-orange.svg)](https://firebase.google.com/products/auth)
 
 API backend para a plataforma NutriAI, projetada para atender nutricionistas no gerenciamento de seus pacientes. O projeto utiliza Spring Boot para a construção de uma API RESTful robusta e Firebase Authentication como provedor de identidade.
@@ -30,7 +30,7 @@ A API implementa um módulo de autenticação completo e seguro, além de endpoi
 ## 🚀 Tecnologias Utilizadas
 
 - **Java 17**: Versão da linguagem Java.
-- **Spring Boot 3.x**: Framework principal para construção da API.
+- **Spring Boot 3.5.3**: Framework principal para construção da API.
 - **Spring Web**: Para criar os endpoints RESTful.
 - **Spring Security 6**: Para controle de autenticação e autorização.
 - **Spring Validation**: Para validação dos dados de entrada.
@@ -79,6 +79,7 @@ Você precisará de duas chaves do seu projeto Firebase.
 5. Adicione a seguinte linha, substituindo `<SUA_CHAVE_API_AQUI>` pela chave que você copiou:
    ```properties
    com.nutriai.firebase.web-api-key=<SUA_CHAVE_API_AQUI>
+   ```
 
 
 
