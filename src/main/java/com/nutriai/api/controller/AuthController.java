@@ -32,7 +32,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody @Valid RegisterUserDTO registerUserDTO) throws FirebaseAuthException {
-        authService.create(registerUserDTO.email(), registerUserDTO.password());
+        authService.create(registerUserDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body("E-mail registrado com sucesso!");
     }
 

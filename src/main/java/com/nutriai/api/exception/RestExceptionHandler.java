@@ -34,6 +34,21 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
+
+    //Captura a exceção de senhas não coincidentes e retorna um erro 400 Bad Request.
+    @ExceptionHandler(PasswordMismatchException.class)
+    public ResponseEntity<ApiErrorResponse> handlePasswordMismatch(PasswordMismatchException ex, HttpServletRequest request) {
+        ApiErrorResponse errorResponse = new ApiErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Dados Inválidos",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+
     // Tratador para a exceção de conta já existente (Registro)
     @ExceptionHandler(AccountAlreadyExistsException.class)
     public ResponseEntity<ApiErrorResponse> handleAccountAlreadyExists(AccountAlreadyExistsException ex, HttpServletRequest request) {
