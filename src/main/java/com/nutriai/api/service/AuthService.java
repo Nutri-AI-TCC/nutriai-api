@@ -15,12 +15,12 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class UserService {
+public class AuthService {
 
     private final FirebaseAuth firebaseAuth;
     private final FirebaseAuthClient firebaseAuthClient;
 
-    public UserService(FirebaseAuth firebaseAuth, FirebaseAuthClient firebaseAuthClient) {
+    public AuthService(FirebaseAuth firebaseAuth, FirebaseAuthClient firebaseAuthClient) {
         this.firebaseAuth = firebaseAuth;
         this.firebaseAuthClient = firebaseAuthClient;
     }

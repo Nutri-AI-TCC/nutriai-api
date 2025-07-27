@@ -3,7 +3,7 @@ package com.nutriai.api.controller;
 
 import com.google.firebase.auth.FirebaseAuthException;
 import com.nutriai.api.dto.auth.*;
-import com.nutriai.api.service.UserService;
+import com.nutriai.api.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-public class UserController {
+public class AuthController {
 
-    private final UserService userService;
+    private final AuthService authService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
 
@@ -32,7 +32,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody @Valid RegisterUserDTO registerUserDTO) throws FirebaseAuthException {
-        userService.create(registerUserDTO.email(), registerUserDTO.password());
+        authService.create(registerUserDTO.email(), registerUserDTO.password());
         return ResponseEntity.status(HttpStatus.CREATED).body("E-mail registrado com sucesso!");
     }
 
@@ -40,7 +40,7 @@ public class UserController {
     /**     * Endpoint para autenticar um usuário existente e retornar os tokens de acesso.*/
     @PostMapping("/login")
     public ResponseEntity<FirebaseSignInResponse> loginUser(@Valid @RequestBody LoginRequest loginRequest) {
-        FirebaseSignInResponse response = userService.login(loginRequest.email(), loginRequest.password());
+        FirebaseSignInResponse response = authService.login(loginRequest.email(), loginRequest.password());
         return ResponseEntity.ok(response);
     }
 
@@ -48,7 +48,7 @@ public class UserController {
     
     @PostMapping("/refresh-token")
     public ResponseEntity<RefreshTokenResponse> refreshToken(@Valid @RequestBody RefreshTokenApiRequest request) {
-        RefreshTokenResponse response = userService.exchangeRefreshToken(request.refreshToken());
+        RefreshTokenResponse response = authService.exchangeRefreshToken(request.refreshToken());
         return ResponseEntity.ok(response);
     }
 
