@@ -101,7 +101,9 @@ A seguir estão detalhados os endpoints disponíveis na NutriAI API.
 
 ### 1. Registrar um Novo Usuário
 
-Este endpoint cria uma nova conta de usuário (nutricionista) no sistema.
+Este endpoint cria uma nova conta de usuário (nutricionista) no sistema. Ele realiza duas operações:
+1.  Cria a conta de autenticação no Firebase.
+2.  Salva os dados de perfil do usuário no banco de dados da aplicação.
 
 -   **Endpoint:** `/api/v1/auth/register`
 -   **Método:** `POST`
@@ -118,26 +120,43 @@ Este endpoint cria uma nova conta de usuário (nutricionista) no sistema.
 ```json
 {
   "email": "nutricionista.novo@email.com",
-  "password": "senhaForte123"
+  "nomeCompleto": "Ana Clara da Silva",
+  "password": "senhaSuperForte123",
+  "confirmarSenha": "senhaSuperForte123",
+  "cpfCnpj": "123.456.789-00",
+  "cep": "01311-000",
+  "cidade": "São Paulo",
+  "rua": "Avenida Paulista",
+  "numero": "1578"
 }
  ```
 
 #### Respostas
 
--   **`201 Created`** - Se o usuário for criado com sucesso.
+-   **`201 Created`** - Se o usuário for criado com sucesso em ambos os sistemas (Firebase e banco local).
     ```
     Usuário registrado com sucesso!
     ```
--   **`400 Bad Request`** - Se os dados enviados forem inválidos (ex: e-mail em formato incorreto ou senha em branco).
+-   **`400 Bad Request`** - Se os dados enviados forem inválidos. Isso pode ocorrer por vários motivos:
+    -   Campo obrigatório em branco (`@NotBlank`).
+    -   E-mail em formato incorreto (`@Email`).
+    -   Senha e confirmação de senha não coincidem.
+
+    *Exemplo (senhas divergentes):*
     ```json
     {
-      "email": "O formato do e-mail fornecido é inválido."
+        "timestamp": "2025-07-27T12:35:00.123456",
+        "status": 400,
+        "error": "Dados Inválidos",
+        "message": "As senhas não coincidem.",
+        "path": "/api/v1/auth/register"
     }
     ```
+
 -   **`409 Conflict`** - Se o e-mail fornecido já estiver em uso.
     ```json
     {
-        "timestamp": "2025-07-26T11:23:50.123456",
+        "timestamp": "2025-07-27T12:36:10.123456",
         "status": 409,
         "error": "Conflito de Recurso",
         "message": "A conta com o e-mail fornecido já existe.",
