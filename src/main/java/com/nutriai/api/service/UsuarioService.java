@@ -1,6 +1,7 @@
 package com.nutriai.api.service;
 
 import com.nutriai.api.entity.Usuario;
+import com.nutriai.api.exception.ResourceNotFoundException;
 import com.nutriai.api.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +16,21 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    /**     * Busca todos os usuários cadastrados no banco de dados.
+    /*** Busca todos os usuários cadastrados no banco de dados.
      * @return Uma lista de todos os usuários.     */
 
     public List<Usuario> findAll() {
         return usuarioRepository.findAll();
+    }
+
+    /*** Busca um usuário pelo seu UID.
+     * @param uid O UID do Firebase do usuário.
+     * @return O objeto Usuario correspondente.
+     * @throws ResourceNotFoundException se nenhum usuário for encontrado com o UID fornecido.*/
+
+    public Usuario findByUid(String uid){
+        return usuarioRepository.findById(uid)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
     }
 
 

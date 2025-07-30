@@ -299,6 +299,61 @@ Este endpoint de exemplo retorna uma lista de dietas e exige autenticação.
     ```
 
 
+### 5. Buscar Dados do Usuário Logado (Rota Protegida)
+
+Este endpoint retorna os dados de perfil completos do usuário que está autenticado, com base no `idToken` enviado.
+
+-   **Endpoint:** `/api/v1/users/me`
+-   **Método:** `GET`
+
+#### Requisição
+
+| Atributo      | Descrição                                         |
+| :------------ | :------------------------------------------------ |
+| **URL** | `/api/v1/users/me`                                |
+| **Método** | `GET`                                             |
+| **Cabeçalhos**| `Authorization: Bearer <seu_idToken_obtido_no_login>` |
+
+**Corpo da Requisição:**
+- Nenhum
+
+#### Respostas
+
+-   **`200 OK`** - Se o `idToken` for válido e o usuário for encontrado no banco de dados.
+    ```json
+    {
+        "uid": "C4cMTOgxEHbRyRyx2SjbjChvqAm2",
+        "nome": "Ana Clara da Silva",
+        "email": "nutricionista.novo@email.com",
+        "cnpjCpf": "123.456.789-00",
+        "cep": "01311-000",
+        "cidade": "São Paulo",
+        "rua": "Avenida Paulista",
+        "numero": "1578"
+    }
+    ```
+-   **`401 Unauthorized`** - Se o cabeçalho `Authorization` estiver ausente, ou se o `idToken` for inválido ou expirado.
+    ```json
+    {
+        "timestamp": "2025-07-30T22:40:10.123456",
+        "status": 401,
+        "error": "Não Autorizado",
+        "message": "A autenticação falhou: o token está ausente, é inválido ou expirado.",
+        "path": "/api/v1/users/me"
+    }
+    ```
+-   **`404 Not Found`** - Se o `idToken` for válido, mas o usuário correspondente não for encontrado no banco de dados local.
+    ```json
+    {
+        "timestamp": "2025-07-30T22:42:15.567890",
+        "status": 404,
+        "error": "Recurso Não Encontrado",
+        "message": "Usuário não encontrado com o ID: C4cMTOgxEHbRyRyx2SjbjChvqAm2",
+        "path": "/api/v1/users/me"
+    }
+    ```
+
+
 ## ⏭️ Próximos Passos
 [ ] Implementar a lógica de negócio no DietaService.
 

@@ -20,6 +20,7 @@ public record RegisterUserDTO(@NotBlank(message = "O e-mail não pode estar em b
                               String confirmarSenha,
 
                               @NotBlank(message = "O CPF/CNPJ não pode estar em branco")
+
                               String cpfCnpj,
 
                               @NotBlank(message = "O CEP não pode estar em branco")
