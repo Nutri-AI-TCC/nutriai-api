@@ -369,6 +369,7 @@ Este endpoint permite que o usuário autenticado atualize seus próprios dados d
 | **Cabeçalhos**| `Content-Type: application/json`<br>`Authorization: Bearer <seu_idToken_obtido_no_login>` |
 
 **Corpo da Requisição:**
+
 ```json
 {
   "nomeCompleto": "Ana Clara da Silva Santos",
@@ -378,7 +379,8 @@ Este endpoint permite que o usuário autenticado atualize seus próprios dados d
   "rua": "Avenida Brigadeiro Luís Antônio",
   "numero": "2344"
 }
-    ```
+
+ ```
 
 #### Respostas
 
