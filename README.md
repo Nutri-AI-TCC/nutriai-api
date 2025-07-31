@@ -353,6 +353,78 @@ Este endpoint retorna os dados de perfil completos do usuário que está autenti
     }
     ```
 
+### 6. Atualizar Perfil do Usuário Logado (Rota Protegida)
+
+Este endpoint permite que o usuário autenticado atualize seus próprios dados de perfil (nome, endereço, etc.).
+
+-   **Endpoint:** `/api/v1/users/me`
+-   **Método:** `PUT`
+
+#### Requisição
+
+| Atributo      | Descrição                                         |
+| :------------ | :------------------------------------------------ |
+| **URL** | `/api/v1/users/me`                                |
+| **Método** | `PUT`                                             |
+| **Cabeçalhos**| `Content-Type: application/json`<br>`Authorization: Bearer <seu_idToken_obtido_no_login>` |
+
+**Corpo da Requisição:**
+```json
+{
+  "nomeCompleto": "Ana Clara da Silva Santos",
+  "cnpjCpf": "111.222.333-44",
+  "cep": "01310-200",
+  "cidade": "São Paulo",
+  "rua": "Avenida Brigadeiro Luís Antônio",
+  "numero": "2344"
+}
+    ```
+
+#### Respostas
+
+-   **`200 OK`** - Se os dados forem válidos e o perfil for atualizado com sucesso.
+    ```json
+    {
+        "uid": "C4cMTOgxEHbRyRyx2SjbjChvqAm2",
+        "nome": "Ana Clara da Silva Santos",
+        "email": "nutricionista.novo@email.com",
+        "cnpjCpf": "111.222.333-44",
+        "cep": "01310-200",
+        "cidade": "São Paulo",
+        "rua": "Avenida Brigadeiro Luís Antônio",
+        "numero": "2344"
+    }
+    ```
+-   **`400 Bad Request`** - Se algum campo obrigatório no corpo da requisição estiver em branco.
+    ```json
+    {
+        "timestamp": "2025-07-30T21:15:00.123456",
+        "status": 400,
+        "error": "Dados Inválidos",
+        "message": "O nome completo não pode estar em branco",
+        "path": "/api/v1/users/me"
+    }
+    ```
+-   **`401 Unauthorized`** - Se o `idToken` estiver ausente, for inválido ou expirado.
+    ```json
+    {
+        "timestamp": "2025-07-30T21:16:10.567890",
+        "status": 401,
+        "error": "Não Autorizado",
+        "message": "A autenticação falhou: o token está ausente, é inválido ou expirado.",
+        "path": "/api/v1/users/me"
+    }
+    ```
+-   **`404 Not Found`** - Se o usuário autenticado não for encontrado no banco de dados local.
+    ```json
+    {
+        "timestamp": "2025-07-30T21:17:15.987654",
+        "status": 404,
+        "error": "Recurso Não Encontrado",
+        "message": "Usuário não encontrado com o ID: C4cMTOgxEHbRyRyx2SjbjChvqAm2",
+        "path": "/api/v1/users/me"
+    }
+    ```
 
 ## ⏭️ Próximos Passos
 [ ] Implementar a lógica de negócio no DietaService.
