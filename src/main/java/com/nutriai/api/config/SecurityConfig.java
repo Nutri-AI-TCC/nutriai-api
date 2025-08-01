@@ -57,7 +57,9 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // Quais origens (URLs) podem acessar a API
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:4200", "http://localhost:5173"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:4200",
+                "http://localhost:5173", "https://nutri-ai-frontend-coral.vercel.app/",
+                "https://nutri-ai-frontend-git-develoment-fontetech.vercel.app/"));
 
         // Métodos HTTP permitidos
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
