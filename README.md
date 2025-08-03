@@ -298,6 +298,7 @@ Este endpoint de exemplo retorna uma lista de dietas e exige autenticação.
     }
     ```
 
+---
 
 ### 5. Buscar Dados do Usuário Logado (Rota Protegida)
 
@@ -352,6 +353,8 @@ Este endpoint retorna os dados de perfil completos do usuário que está autenti
         "path": "/api/v1/users/me"
     }
     ```
+    
+---
 
 ### 6. Atualizar Perfil do Usuário Logado (Rota Protegida)
 
