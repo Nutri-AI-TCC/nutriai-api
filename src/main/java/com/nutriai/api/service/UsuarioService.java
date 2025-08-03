@@ -1,10 +1,12 @@
 package com.nutriai.api.service;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.nutriai.api.dto.usuario.UpdateUserDTO;
 import com.nutriai.api.entity.Usuario;
 import com.nutriai.api.exception.ResourceNotFoundException;
 import com.nutriai.api.repository.UsuarioRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,9 +15,12 @@ import java.util.List;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final FirebaseAuth firebaseAuth;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+
+    public UsuarioService(UsuarioRepository usuarioRepository, FirebaseAuth firebaseAuth) {
         this.usuarioRepository = usuarioRepository;
+        this.firebaseAuth = firebaseAuth;
     }
 
     /*** Busca todos os usuários cadastrados no banco de dados.
@@ -53,6 +58,20 @@ public class UsuarioService {
         usuario.setNumero(dto.numero());
 
         return usuarioRepository.save(usuario);
+    }
+
+
+    @Transactional
+    public void delete(String uid) {
+        try {
+            Usuario usuarioParaDeletar = this.findByUid(uid);
+
+            usuarioRepository.delete(usuarioParaDeletar);
+            firebaseAuth.deleteUser(uid);
+
+        } catch (FirebaseAuthException e) {
+            throw new RuntimeException("Erro ao deletar usuário no Firebase. A operação no banco de dados foi revertida.", e);
+        }
     }
 
 

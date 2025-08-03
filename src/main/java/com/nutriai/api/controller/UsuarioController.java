@@ -49,4 +49,16 @@ public class UsuarioController {
     }
 
 
+    /* Endpoint para que o usuário autenticado delete sua própria conta. */
+
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteMyAccount(Authentication authentication) {
+        // Pega o UID do usuário logado.
+        String uid = authentication.getName();
+        usuarioService.delete(uid);
+
+        return ResponseEntity.noContent().build();
+    }
+
+
 }

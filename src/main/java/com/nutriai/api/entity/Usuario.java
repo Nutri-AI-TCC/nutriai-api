@@ -1,12 +1,11 @@
 package com.nutriai.api.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table(name = "USUARIOS", schema = "ADMIN")
@@ -40,5 +39,8 @@ public class Usuario {
     @Column(name = "NUMERO_USUARIO")
     private String numero;
 
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Paciente> pacientes;
 
 }
