@@ -431,6 +431,52 @@ Este endpoint permite que o usuário autenticado atualize seus próprios dados d
     }
     ```
 
+---
+
+### 7. Deletar a Própria Conta (Rota Protegida)
+
+Este endpoint permite que o usuário autenticado exclua permanentemente sua própria conta e todos os dados associados (perfil, pacientes, dietas, etc.), tanto do banco de dados da aplicação quanto do Firebase Authentication. **Esta é uma operação irreversível.**
+
+-   **Endpoint:** `/api/v1/users/me`
+-   **Método:** `DELETE`
+
+#### Requisição
+
+| Atributo      | Descrição                                         |
+| :------------ | :------------------------------------------------ |
+| **URL** | `/api/v1/users/me`                                |
+| **Método** | `DELETE`                                          |
+| **Cabeçalhos**| `Authorization: Bearer <seu_idToken_obtido_no_login>` |
+
+**Corpo da Requisição:**
+- Nenhum
+
+#### Respostas
+
+-   **`204 No Content`** - Se a conta e todos os dados associados forem excluídos com sucesso.
+    *O corpo da resposta estará vazio.*
+
+-   **`401 Unauthorized`** - Se o `idToken` estiver ausente, for inválido ou expirado.
+    ```json
+    {
+        "timestamp": "2025-08-03T15:20:10.123456",
+        "status": 401,
+        "error": "Não Autorizado",
+        "message": "A autenticação falhou: o token está ausente, é inválido ou expirado.",
+        "path": "/api/v1/users/me"
+    }
+    ```
+-   **`404 Not Found`** - Se o usuário autenticado não for encontrado no banco de dados local para exclusão.
+    ```json
+    {
+        "timestamp": "2025-08-03T15:21:15.567890",
+        "status": 404,
+        "error": "Recurso Não Encontrado",
+        "message": "Usuário não encontrado com o ID: C4cMTOgxEHbRyRyx2SjbjChvqAm2",
+        "path": "/api/v1/users/me"
+    }
+    ```
+
 ## ⏭️ Próximos Passos
 [ ] Implementar a lógica de negócio no DietaService.
 
