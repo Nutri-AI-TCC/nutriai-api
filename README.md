@@ -477,6 +477,125 @@ Este endpoint permite que o usuário autenticado exclua permanentemente sua pró
     }
     ```
 
+
+---
+
+## Endpoints de Pacientes
+
+Endpoints para o gerenciamento completo dos pacientes de um nutricionista. Todas as rotas nesta seção são protegidas e exigem autenticação.
+
+### 8. Criar um Novo Paciente
+
+Este endpoint permite que um nutricionista autenticado registre um novo paciente em sua carteira.
+
+-   **Endpoint:** `/api/v1/pacientes`
+-   **Método:** `POST`
+
+#### Requisição
+
+| Atributo      | Descrição                      |
+| :------------ | :----------------------------- |
+| **URL** | `/api/v1/pacientes`            |
+| **Método** | `POST`                         |
+| **Cabeçalhos**| `Content-Type: application/json`<br>`Authorization: Bearer <seu_idToken_obtido_no_login>` |
+
+**Corpo da Requisição:**
+```json
+{
+  "nome": "Carlos Andrade",
+  "nascimento": "1985-05-20",
+  "peso": 85.5,
+  "altura": 1.78,
+  "cnpjCpf": "111.222.333-44",
+  "alergias": "Alergia a amendoim e camarão.",
+  "comorbidades": "Hipertensão arterial leve.",
+  "medicacoes": "Losartana 50mg, uma vez ao dia.",
+  "ativo": true
+}
+ ```
+
+#### Respostas
+
+-   **`201 Created`** - Se o paciente for criado e associado ao nutricionista com sucesso.
+    ```json
+    {
+        "id": 1,
+        "nome": "Carlos Andrade",
+        "nascimento": "1985-05-20",
+        "peso": 85.50,
+        "altura": 1.78,
+        "ativo": true,
+        "usuario": {
+            "uid": "UID_DO_NUTRICIONISTA_LOGADO",
+            "nome": "Nome do Nutricionista",
+            "email": "email@nutricionista.com"
+        }
+    }
+    ```
+-   **`400 Bad Request`** - Se os dados enviados na requisição forem inválidos.
+-   **`401 Unauthorized`** - Se o `idToken` for inválido ou ausente.
+
+---
+
+### 9. Listar Pacientes do Nutricionista
+
+Este endpoint retorna uma lista de todos os pacientes associados ao nutricionista autenticado.
+
+-   **Endpoint:** `/api/v1/pacientes`
+-   **Método:** `GET`
+
+#### Requisição
+
+| Atributo      | Descrição                                         |
+| :------------ | :------------------------------------------------ |
+| **URL** | `/api/v1/pacientes`                               |
+| **Método** | `GET`                                             |
+| **Cabeçalhos**| `Authorization: Bearer <seu_idToken_obtido_no_login>` |
+
+**Corpo da Requisição:**
+- Nenhum
+
+#### Respostas
+
+-   **`200 OK`** - Retorna uma lista com os DTOs dos pacientes.
+    ```json
+    [
+        {
+            "id": 1,
+            "nome": "Carlos Andrade",
+            "nascimento": "1985-05-20",
+            "peso": 85.50,
+            "altura": 1.78,
+            "ativo": true,
+            "usuario": {
+                "uid": "UID_DO_NUTRICIONISTA_LOGADO",
+                "nome": "Nome do Nutricionista",
+                "email": "email@nutricionista.com"
+            }
+        },
+        {
+            "id": 2,
+            "nome": "Juliana Ribeiro",
+            "nascimento": "1992-11-10",
+            "peso": 62.00,
+            "altura": 1.65,
+            "ativo": true,
+            "usuario": {
+                "uid": "UID_DO_NUTRICIONISTA_LOGADO",
+                "nome": "Nome do Nutricionista",
+                "email": "email@nutricionista.com"
+            }
+        }
+    ]
+    ```
+-   **`200 OK`** - Se o nutricionista não tiver pacientes, retorna uma lista vazia.
+    ```json
+    []
+    ```
+-   **`401 Unauthorized`** - Se o `idToken` for inválido ou ausente.
+
+---
+
 ## ⏭️ Próximos Passos
 [ ] Implementar a lógica de negócio no DietaService.
 
