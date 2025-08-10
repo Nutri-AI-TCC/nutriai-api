@@ -2,15 +2,15 @@ package com.nutriai.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "USUARIOS", schema = "ADMIN")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Usuario {
@@ -44,5 +44,22 @@ public class Usuario {
     @JsonIgnore
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Paciente> pacientes;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        // ✅ Corrigido para Usuario
+        Usuario usuario = (Usuario) o;
+        // ✅ Corrigido para usar 'uid'
+        return Objects.equals(uid, usuario.uid);
+    }
+
+    @Override
+    public int hashCode() {
+        // ✅ Corrigido para usar 'uid'
+        return Objects.hash(uid);
+    }
+
 
 }

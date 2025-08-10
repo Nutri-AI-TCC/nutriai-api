@@ -2,13 +2,17 @@ package com.nutriai.api.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Table(name = "PACIENTES", schema = "ADMIN")
-@Data
+@Getter
+@Setter
 public class Paciente {
 
     @Id
@@ -51,4 +55,19 @@ public class Paciente {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_USUARIO_PACIENTE", nullable = false)
     private Usuario usuario;
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Paciente paciente = (Paciente) o;
+        return id != null && Objects.equals(id, paciente.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
 }
