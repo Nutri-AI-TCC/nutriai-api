@@ -5,7 +5,9 @@ import com.nutriai.api.dto.paciente.PacienteResponseDTO;
 import com.nutriai.api.dto.usuario.UsuarioSummaryDTO;
 import com.nutriai.api.entity.Paciente;
 import com.nutriai.api.entity.Usuario;
+import com.nutriai.api.exception.ResourceNotFoundException;
 import com.nutriai.api.repository.PacienteRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,6 +57,25 @@ public class PacienteService {
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
 
+    }
+
+    /** Busca um paciente específico pelo seu ID, garantindo que ele pertença ao nutricionista logado.
+     * @param pacienteId O ID do paciente a ser buscado.
+     * @param usuarioUid O UID do nutricionista que está fazendo a requisição.     */
+
+    @Transactional(readOnly = true)
+    public PacienteResponseDTO findByIdAndUsuarioUid(Long pacienteId, String usuarioUid) {
+        // 1. Busca o paciente pelo ID.
+        Paciente paciente = pacienteRepository.findById(pacienteId)
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado com o ID: " + pacienteId));
+
+        // 2. Garante que o paciente pertence ao usuário logado.
+        if (!paciente.getUsuario().getUid().equals(usuarioUid)) {
+            throw new AccessDeniedException("Você não tem permissão para acessar este paciente.");
+        }
+
+        // 3. converte para DTO e retorna.
+        return convertToDto(paciente);
     }
 
 

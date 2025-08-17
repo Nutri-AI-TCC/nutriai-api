@@ -45,5 +45,20 @@ public class PacienteController {
         return ResponseEntity.ok(pacientes);
     }
 
+    /** Busca e retorna os dados de um paciente específico pelo seu ID.
+     * @param id O ID do paciente, vindo da URL (ex: /api/v1/pacientes/82).
+     * @param authentication Fornecido pelo Spring Security com os dados do usuário logado.
+     * @return ResponseEntity com o DTO do paciente ou um erro apropriado (404, 403).
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<PacienteResponseDTO> getPacienteById(@PathVariable Long id, Authentication authentication) {
+        // Pega o UID do nutricionista logado
+        String nutricionistaUid = authentication.getName();
+
+        PacienteResponseDTO paciente = pacienteService.findByIdAndUsuarioUid(id, nutricionistaUid);
+
+        return ResponseEntity.ok(paciente);
+    }
+
 
 }
