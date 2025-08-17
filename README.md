@@ -596,6 +596,77 @@ Este endpoint retorna uma lista de todos os pacientes associados ao nutricionist
 
 ---
 
+### 10. Buscar Paciente Específico por ID (Rota Protegida)
+
+Este endpoint retorna os dados detalhados de um paciente específico, desde que ele pertença ao nutricionista autenticado.
+
+-   **Endpoint:** `/api/v1/pacientes/{id}`
+-   **Método:** `GET`
+
+#### Requisição
+
+| Atributo | Descrição |
+| :--- | :--- |
+| **URL** | `/api/v1/pacientes/{id}` |
+| **Parâmetros de URL** | `id` (obrigatório): O ID numérico do paciente que você deseja buscar. |
+| **Método** | `GET` |
+| **Cabeçalhos**| `Authorization: Bearer <seu_idToken_obtido_no_login>` |
+
+**Corpo da Requisição:**
+- Nenhum
+
+#### Respostas
+
+-   **`200 OK`** - Se o paciente for encontrado e pertencer ao usuário.
+    ```json
+    {
+        "id": 82,
+        "nome": "Carlos Andrade",
+        "nascimento": "1985-05-20",
+        "peso": 85.50,
+        "altura": 1.78,
+        "ativo": true,
+        "usuario": {
+            "uid": "UID_DO_NUTRICIONISTA_LOGADO",
+            "nome": "Nome do Nutricionista",
+            "email": "email@nutricionista.com"
+        }
+    }
+    ```
+-   **`401 Unauthorized`** - Se o `idToken` estiver ausente, for inválido ou expirado.
+    ```json
+    {
+        "timestamp": "2025-08-17T18:40:00.123456",
+        "status": 401,
+        "error": "Não Autorizado",
+        "message": "A autenticação falhou: o token está ausente, é inválido ou expirado.",
+        "path": "/api/v1/pacientes/82"
+    }
+    ```
+-   **`403 Forbidden`** - Se o paciente existir, mas não pertencer ao usuário autenticado.
+    ```json
+    {
+        "timestamp": "2025-08-17T18:41:00.123456",
+        "status": 403,
+        "error": "Acesso Negado",
+        "message": "Você não tem permissão para acessar este paciente.",
+        "path": "/api/v1/pacientes/82"
+    }
+    ```
+-   **`404 Not Found`** - Se nenhum paciente for encontrado com o ID fornecido.
+    ```json
+    {
+        "timestamp": "2025-08-17T18:42:00.123456",
+        "status": 404,
+        "error": "Recurso Não Encontrado",
+        "message": "Paciente não encontrado com o ID: 999",
+        "path": "/api/v1/pacientes/999"
+    }
+    ```
+
+---
+
+
 ## ⏭️ Próximos Passos
 [ ] Implementar a lógica de negócio no DietaService.
 
