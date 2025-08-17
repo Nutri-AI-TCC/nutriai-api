@@ -666,6 +666,89 @@ Este endpoint retorna os dados detalhados de um paciente específico, desde que 
 
 ---
 
+### 11. Atualizar um Paciente (Rota Protegida)
+
+Este endpoint permite que o usuário autenticado atualize os dados de um paciente que lhe pertence.
+
+-   **Endpoint:** `/api/v1/pacientes/{id}`
+-   **Método:** `PUT`
+
+#### Requisição
+
+| Atributo | Descrição |
+| :--- | :--- |
+| **URL** | `/api/v1/pacientes/{id}` |
+| **Parâmetros de URL** | `id` (obrigatório): O ID numérico do paciente a ser atualizado. |
+| **Método** | `PUT` |
+| **Cabeçalhos**| `Content-Type: application/json`<br>`Authorization: Bearer <seu_idToken_obtido_no_login>` |
+
+**Corpo da Requisição:**
+```json
+{
+  "nome": "Carlos Andrade da Silva",
+  "nascimento": "1985-05-20",
+  "peso": 82.5,
+  "altura": 1.79,
+  "cnpjCpf": "111.222.333-44",
+  "alergias": "Alergia a amendoim e camarão. Nenhuma outra conhecida.",
+  "comorbidades": "Hipertensão arterial controlada.",
+  "medicacoes": "Losartana 50mg, uma vez ao dia de manhã.",
+  "ativo": true
+}
+ ```
+
+#### Respostas
+
+-   **`200 OK`** - Se o paciente for atualizado com sucesso. O corpo da resposta contém os dados atualizados.
+    ```json
+    {
+        "id": 82,
+        "nome": "Carlos Andrade da Silva",
+        "nascimento": "1985-05-20",
+        "peso": 82.50,
+        "altura": 1.79,
+        "ativo": true,
+        "usuario": {
+            "uid": "UID_DO_NUTRICIONISTA_LOGADO",
+            "nome": "Nome do Nutricionista",
+            "email": "email@nutricionista.com"
+        }
+    }
+    ```
+-   **`400 Bad Request`** - Se os dados enviados no corpo da requisição forem inválidos.
+-   **`401 Unauthorized`** - Se o `idToken` for inválido ou ausente.
+-   **`403 Forbidden`** - Se o paciente não pertencer ao nutricionista autenticado.
+-   **`404 Not Found`** - Se o paciente com o `id` informado не existir.
+
+---
+
+### 12. Deletar um Paciente (Rota Protegida)
+Este endpoint permite que o usuário autenticado exclua permanentemente um de seus pacientes. **Esta é uma operação irreversível.**
+
+-   **Endpoint:** `/api/v1/pacientes/{id}`
+-   **Método:** `DELETE`
+
+#### Requisição
+
+| Atributo | Descrição |
+| :--- | :--- |
+| **URL** | `/api/v1/pacientes/{id}` |
+| **Parâmetros de URL** | `id` (obrigatório): O ID numérico do paciente a ser deletado. |
+| **Método** | `DELETE` |
+| **Cabeçalhos**| `Authorization: Bearer <seu_idToken_obtido_no_login>` |
+
+**Corpo da Requisição:**
+- Nenhum
+
+#### Respostas
+
+-   **`204 No Content`** - Se o paciente for deletado com sucesso. O corpo da resposta estará vazio.
+-   **`401 Unauthorized`** - Se o `idToken` for inválido ou ausente.
+-   **`403 Forbidden`** - Se o paciente não pertencer ao nutricionista autenticado.
+-   **`404 Not Found`** - Se o paciente com o `id` informado não existir.
+
+---
+
 
 ## ⏭️ Próximos Passos
 [ ] Implementar a lógica de negócio no DietaService.
