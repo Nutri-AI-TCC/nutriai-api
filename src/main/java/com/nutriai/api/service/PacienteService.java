@@ -2,6 +2,7 @@ package com.nutriai.api.service;
 
 import com.nutriai.api.dto.paciente.CreatePacienteDTO;
 import com.nutriai.api.dto.paciente.PacienteResponseDTO;
+import com.nutriai.api.dto.paciente.UpdatePacienteDTO;
 import com.nutriai.api.dto.usuario.UsuarioSummaryDTO;
 import com.nutriai.api.entity.Paciente;
 import com.nutriai.api.entity.Usuario;
@@ -26,7 +27,7 @@ public class PacienteService {
     }
 
     @Transactional
-    public Paciente create(CreatePacienteDTO dto, String usuarioUid) {
+    public PacienteResponseDTO create(CreatePacienteDTO dto, String usuarioUid) {
         Usuario nutricionista = usuarioService.findByUid(usuarioUid);
 
         Paciente novoPaciente = new Paciente();
@@ -41,7 +42,10 @@ public class PacienteService {
         novoPaciente.setAtivo(dto.ativo());
         novoPaciente.setUsuario(nutricionista);
 
-        return pacienteRepository.save(novoPaciente);
+        Paciente pacienteSalvo = pacienteRepository.save(novoPaciente);
+
+        return convertToDto(pacienteSalvo);
+
     }
 
 
@@ -78,8 +82,33 @@ public class PacienteService {
         return convertToDto(paciente);
     }
 
+    /** Atualiza os dados de um paciente existente, após verificar a permissão do usuário.     */
+    @Transactional
+    public PacienteResponseDTO update(Long pacienteId, String usuarioUid, UpdatePacienteDTO dto) {
+        // 1. Busca o paciente e verifica se ele pertence ao usuário logado.
+        Paciente paciente = findByIdAndCheckOwnership(pacienteId, usuarioUid);
 
-    private PacienteResponseDTO convertToDto(Paciente paciente) {
+        // 2. Atualiza os campos da entidade com os dados do DTO.
+        paciente.setNome(dto.nome());
+        paciente.setNascimento(dto.nascimento());
+        paciente.setPeso(dto.peso());
+        paciente.setAltura(dto.altura());
+        paciente.setCnpjCpf(dto.cnpjCpf());
+        paciente.setAlergias(dto.alergias());
+        paciente.setComorbidades(dto.comorbidades());
+        paciente.setMedicacoes(dto.medicacoes());
+        paciente.setAtivo(dto.ativo());
+
+        // 3. Salva a entidade atualizada.
+        Paciente pacienteSalvo = pacienteRepository.save(paciente);
+
+        // 4. Converte a entidade atualizada para DTO e a retorna.
+        return convertToDto(pacienteSalvo);
+    }
+
+
+
+    public PacienteResponseDTO convertToDto(Paciente paciente) {
         Usuario usuario = paciente.getUsuario();
 
         UsuarioSummaryDTO usuarioDto = new UsuarioSummaryDTO(
@@ -97,6 +126,16 @@ public class PacienteService {
                 paciente.isAtivo(),
                 usuarioDto
         );
+    }
+
+    private Paciente findByIdAndCheckOwnership(Long pacienteId, String usuarioUid) {
+        Paciente paciente = pacienteRepository.findById(pacienteId)
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado com o ID: " + pacienteId));
+
+        if (!paciente.getUsuario().getUid().equals(usuarioUid)) {
+            throw new AccessDeniedException("Você não tem permissão para acessar este paciente.");
+        }
+        return paciente;
     }
 
 

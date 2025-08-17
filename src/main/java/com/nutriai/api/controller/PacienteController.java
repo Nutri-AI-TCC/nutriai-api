@@ -2,6 +2,7 @@ package com.nutriai.api.controller;
 
 import com.nutriai.api.dto.paciente.CreatePacienteDTO;
 import com.nutriai.api.dto.paciente.PacienteResponseDTO;
+import com.nutriai.api.dto.paciente.UpdatePacienteDTO;
 import com.nutriai.api.entity.Paciente;
 import com.nutriai.api.service.PacienteService;
 import jakarta.validation.Valid;
@@ -30,12 +31,13 @@ public class PacienteController {
      */
 
     @PostMapping
-    public ResponseEntity<Paciente> createPaciente(@Valid @RequestBody CreatePacienteDTO dto,
+    public ResponseEntity<PacienteResponseDTO> createPaciente(@Valid @RequestBody CreatePacienteDTO dto,
                                                    Authentication authentication) {
-        String nutricionistaUid = authentication.getName();
-        Paciente pacienteSalvo = pacienteService.create(dto, nutricionistaUid);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(pacienteSalvo);
+        String nutricionistaUid = authentication.getName();
+        PacienteResponseDTO responseDto = pacienteService.create(dto, nutricionistaUid);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     @GetMapping
@@ -45,11 +47,7 @@ public class PacienteController {
         return ResponseEntity.ok(pacientes);
     }
 
-    /** Busca e retorna os dados de um paciente específico pelo seu ID.
-     * @param id O ID do paciente, vindo da URL (ex: /api/v1/pacientes/82).
-     * @param authentication Fornecido pelo Spring Security com os dados do usuário logado.
-     * @return ResponseEntity com o DTO do paciente ou um erro apropriado (404, 403).
-     */
+    /** Busca e retorna os dados de um paciente específico pelo seu ID.     */
     @GetMapping("/{id}")
     public ResponseEntity<PacienteResponseDTO> getPacienteById(@PathVariable Long id, Authentication authentication) {
         // Pega o UID do nutricionista logado
@@ -58,6 +56,19 @@ public class PacienteController {
         PacienteResponseDTO paciente = pacienteService.findByIdAndUsuarioUid(id, nutricionistaUid);
 
         return ResponseEntity.ok(paciente);
+    }
+
+    /** Atualiza os dados de um paciente existente. */
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PacienteResponseDTO> updatePaciente(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdatePacienteDTO dto,
+            Authentication authentication) {
+
+        String nutricionistaUid = authentication.getName();
+        PacienteResponseDTO pacienteAtualizado = pacienteService.update(id, nutricionistaUid, dto);
+        return ResponseEntity.ok(pacienteAtualizado);
     }
 
 
