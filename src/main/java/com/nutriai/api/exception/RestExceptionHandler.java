@@ -1,5 +1,6 @@
 package com.nutriai.api.exception;
 
+import com.google.firebase.auth.FirebaseAuthException;
 import com.nutriai.api.dto.error.ApiErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -93,6 +94,33 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiErrorResponse> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
+        ApiErrorResponse errorResponse = new ApiErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.FORBIDDEN.value(),
+                "Acesso Negado",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    }
+
+    /**Captura erros genéricos do Firebase Auth (ex: senha fraca, formato de e-mail inválido)
+     *  * e os transforma em uma resposta 400 Bad Request.     */
+    @ExceptionHandler(FirebaseAuthException.class)
+    public ResponseEntity<ApiErrorResponse> handleFirebaseAuthException(FirebaseAuthException ex, HttpServletRequest request) {
+        ApiErrorResponse errorResponse = new ApiErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Erro de Validação do Firebase",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleGenericException(Exception ex, HttpServletRequest request) {
         System.err.print("Ocorreu um erro inesperado: " + ex.getMessage());
@@ -108,16 +136,5 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ApiErrorResponse> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
-        ApiErrorResponse errorResponse = new ApiErrorResponse(
-                LocalDateTime.now(),
-                HttpStatus.FORBIDDEN.value(),
-                "Acesso Negado",
-                ex.getMessage(),
-                request.getRequestURI()
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
-    }
 
 }

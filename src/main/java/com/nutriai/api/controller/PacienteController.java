@@ -3,7 +3,6 @@ package com.nutriai.api.controller;
 import com.nutriai.api.dto.paciente.CreatePacienteDTO;
 import com.nutriai.api.dto.paciente.PacienteResponseDTO;
 import com.nutriai.api.dto.paciente.UpdatePacienteDTO;
-import com.nutriai.api.entity.Paciente;
 import com.nutriai.api.service.PacienteService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

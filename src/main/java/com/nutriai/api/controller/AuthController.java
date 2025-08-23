@@ -7,6 +7,7 @@ import com.nutriai.api.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -52,6 +53,17 @@ public class AuthController {
     public ResponseEntity<RefreshTokenResponse> refreshToken(@Valid @RequestBody RefreshTokenApiRequest request) {
         RefreshTokenResponse response = authService.exchangeRefreshToken(request.refreshToken());
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(
+            @Valid @RequestBody ChangePasswordRequestDTO dto,
+            Authentication authentication) throws FirebaseAuthException {
+
+        String uid = authentication.getName();
+        authService.changePassword(uid, dto);
+
+        return ResponseEntity.ok("Senha alterada com sucesso.");
     }
 
 }
