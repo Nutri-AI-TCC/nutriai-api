@@ -99,6 +99,9 @@ A seguir estão detalhados os endpoints disponíveis na NutriAI API.
 
 ---
 
+## Endpoints de Autenticação
+
+
 ### 1. Registrar um Novo Usuário
 
 Este endpoint cria uma nova conta de usuário (nutricionista) no sistema. Ele realiza duas operações:
@@ -254,7 +257,61 @@ Este endpoint troca um `refreshToken` válido por um novo `idToken`.
 
 ---
 
-### 4. Buscar Todas as Dietas (Rota Protegida)
+### 4. Alterar Senha do Usuário Logado
+
+Este endpoint permite que um usuário autenticado altere sua própria senha, exigindo a senha atual para verificação de segurança.
+
+-   **Endpoint:** `/api/v1/auth/change-password`
+-   **Método:** `POST`
+
+#### Requisição
+
+| Atributo      | Descrição                                         |
+| :------------ | :------------------------------------------------ |
+| **URL** | `/api/v1/auth/change-password`                    |
+| **Método** | `POST`                                            |
+| **Cabeçalhos**| `Content-Type: application/json`<br>`Authorization: Bearer <seu_idToken_obtido_no_login>` |
+
+**Corpo da Requisição:**
+```json
+{
+  "currentPassword": "senhaAntigaCorreta123",
+  "newPassword": "novaSenhaSuperForte456",
+  "confirmPassword": "novaSenhaSuperForte456"
+}
+ ```
+
+#### Respostas
+
+-   **`200 OK`** - Se a senha atual estiver correta e a nova senha for alterada com sucesso.
+    ```
+    Senha alterada com sucesso.
+    ```
+-   **`400 Bad Request`** - Se a nova senha e a confirmação não coincidirem, ou se a nova senha for inválida (ex: menos de 6 caracteres).
+    ```json
+    {
+        "timestamp": "2025-08-23T14:50:00.123456",
+        "status": 400,
+        "error": "Dados Inválidos",
+        "message": "A nova senha e a confirmação não coincidem.",
+        "path": "/api/v1/auth/change-password"
+    }
+    ```
+-   **`401 Unauthorized`** - Se o `idToken` for inválido/expirado, ou se a **senha atual** (`currentPassword`) fornecida estiver incorreta.
+    ```json
+    {
+        "timestamp": "2025-08-23T14:51:10.567890",
+        "status": 401,
+        "error": "Não Autorizado",
+        "message": "A senha atual fornecida está incorreta.",
+        "path": "/api/v1/auth/change-password"
+    }
+    ```
+
+---
+## Endpoints de Dietas
+
+### 1. Buscar Todas as Dietas (Rota Protegida)
 
 Este endpoint de exemplo retorna uma lista de dietas e exige autenticação.
 
@@ -299,8 +356,10 @@ Este endpoint de exemplo retorna uma lista de dietas e exige autenticação.
     ```
 
 ---
+## Endpoints de Usuários
 
-### 5. Buscar Dados do Usuário Logado (Rota Protegida)
+
+### 1. Buscar Dados do Usuário Logado (Rota Protegida)
 
 Este endpoint retorna os dados de perfil completos do usuário que está autenticado, com base no `idToken` enviado.
 
@@ -356,7 +415,7 @@ Este endpoint retorna os dados de perfil completos do usuário que está autenti
     
 ---
 
-### 6. Atualizar Perfil do Usuário Logado (Rota Protegida)
+### 2. Atualizar Perfil do Usuário Logado (Rota Protegida)
 
 Este endpoint permite que o usuário autenticado atualize seus próprios dados de perfil (nome, endereço, etc.).
 
@@ -433,7 +492,7 @@ Este endpoint permite que o usuário autenticado atualize seus próprios dados d
 
 ---
 
-### 7. Deletar a Própria Conta (Rota Protegida)
+### 3. Deletar a Própria Conta (Rota Protegida)
 
 Este endpoint permite que o usuário autenticado exclua permanentemente sua própria conta e todos os dados associados (perfil, pacientes, dietas, etc.), tanto do banco de dados da aplicação quanto do Firebase Authentication. **Esta é uma operação irreversível.**
 
@@ -484,7 +543,7 @@ Este endpoint permite que o usuário autenticado exclua permanentemente sua pró
 
 Endpoints para o gerenciamento completo dos pacientes de um nutricionista. Todas as rotas nesta seção são protegidas e exigem autenticação.
 
-### 8. Criar um Novo Paciente
+### 1. Criar um Novo Paciente
 
 Este endpoint permite que um nutricionista autenticado registre um novo paciente em sua carteira.
 
@@ -537,7 +596,7 @@ Este endpoint permite que um nutricionista autenticado registre um novo paciente
 
 ---
 
-### 9. Listar Pacientes do Nutricionista
+### 2. Listar Pacientes do Nutricionista
 
 Este endpoint retorna uma lista de todos os pacientes associados ao nutricionista autenticado.
 
@@ -596,7 +655,7 @@ Este endpoint retorna uma lista de todos os pacientes associados ao nutricionist
 
 ---
 
-### 10. Buscar Paciente Específico por ID (Rota Protegida)
+### 3. Buscar Paciente Específico por ID (Rota Protegida)
 
 Este endpoint retorna os dados detalhados de um paciente específico, desde que ele pertença ao nutricionista autenticado.
 
@@ -666,7 +725,7 @@ Este endpoint retorna os dados detalhados de um paciente específico, desde que 
 
 ---
 
-### 11. Atualizar um Paciente (Rota Protegida)
+### 4. Atualizar um Paciente (Rota Protegida)
 
 Este endpoint permite que o usuário autenticado atualize os dados de um paciente que lhe pertence.
 
@@ -722,7 +781,7 @@ Este endpoint permite que o usuário autenticado atualize os dados de um pacient
 
 ---
 
-### 12. Deletar um Paciente (Rota Protegida)
+### 5. Deletar um Paciente (Rota Protegida)
 Este endpoint permite que o usuário autenticado exclua permanentemente um de seus pacientes. **Esta é uma operação irreversível.**
 
 -   **Endpoint:** `/api/v1/pacientes/{id}`
@@ -753,6 +812,6 @@ Este endpoint permite que o usuário autenticado exclua permanentemente um de se
 ## ⏭️ Próximos Passos
 [ ] Implementar a lógica de negócio no DietaService.
 
-[ ] Desenvolver os endpoints de CRUD para Pacientes, que também serão rotas protegidas.
-
 [ ] Desenvolver os endpoints de CRUD para Planos Alimentares.
+
+[ ] Upload e armazenamento de documentos de pacientes no object storage (Bucket) da oracle
