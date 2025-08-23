@@ -121,6 +121,23 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
+    /**    Captura a exceção de CPF/CNPJ duplicado e a transforma em uma resposta HTTP 409 Conflict.     */
+    @ExceptionHandler(CpfCnpjAlreadyExistsException.class)
+    public ResponseEntity<ApiErrorResponse> handleCpfCnpjAlreadyExists(
+            CpfCnpjAlreadyExistsException ex, HttpServletRequest request) {
+
+        ApiErrorResponse errorResponse = new ApiErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                "Conflito de Dados",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleGenericException(Exception ex, HttpServletRequest request) {
         System.err.print("Ocorreu um erro inesperado: " + ex.getMessage());

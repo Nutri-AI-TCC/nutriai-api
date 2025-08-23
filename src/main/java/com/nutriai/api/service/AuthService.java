@@ -10,6 +10,7 @@ import com.nutriai.api.dto.auth.RefreshTokenResponse;
 import com.nutriai.api.dto.auth.RegisterUserDTO;
 import com.nutriai.api.entity.Usuario;
 import com.nutriai.api.exception.AccountAlreadyExistsException;
+import com.nutriai.api.exception.CpfCnpjAlreadyExistsException;
 import com.nutriai.api.exception.InvalidLoginCredentialsException;
 import com.nutriai.api.exception.PasswordMismatchException;
 import com.nutriai.api.repository.UsuarioRepository;
@@ -45,20 +46,40 @@ public class AuthService {
             throw new PasswordMismatchException("As senhas não coincidem.");
         }
 
-        // Cria o usuário no Firebase e captura o UID
-        String firebaseUid = createFirebaseUser(dto.email(), dto.password());
+        if (usuarioRepository.existsByCnpjCpf(dto.cpfCnpj())) {
+            throw new CpfCnpjAlreadyExistsException("O CPF/CNPJ informado já está em uso.");
+        }
 
-        Usuario novoUsuario = new Usuario();
-        novoUsuario.setUid(firebaseUid);
-        novoUsuario.setEmail(dto.email());
-        novoUsuario.setNome(dto.nomeCompleto());
-        novoUsuario.setCnpjCpf(dto.cpfCnpj());
-        novoUsuario.setCep(dto.cep());
-        novoUsuario.setCidade(dto.cidade());
-        novoUsuario.setRua(dto.rua());
-        novoUsuario.setNumero(dto.numero());
-        usuarioRepository.save(novoUsuario);
+        // --- Lógica de Rollback ---
+        String firebaseUid = null;
+        try {
+            // 1. Cria o usuário no Firebase e captura o UID
+            firebaseUid = createFirebaseUser(dto.email(), dto.password());
 
+            // 2. Tenta salvar no banco de dados
+            Usuario novoUsuario = new Usuario();
+            novoUsuario.setUid(firebaseUid);
+            novoUsuario.setEmail(dto.email());
+            novoUsuario.setNome(dto.nomeCompleto());
+            novoUsuario.setCnpjCpf(dto.cpfCnpj());
+            novoUsuario.setCep(dto.cep());
+            novoUsuario.setCidade(dto.cidade());
+            novoUsuario.setRua(dto.rua());
+            novoUsuario.setNumero(dto.numero());
+            usuarioRepository.save(novoUsuario);
+
+        } catch (Exception e) {
+            // 3. Se um erro acontecer APÓS a criação do usuário no Firebase
+            // DESFAZEMOS a criação do usuário no Firebase para evitar inconsistência.
+            if (firebaseUid != null) {
+                try {
+                    firebaseAuth.deleteUser(firebaseUid);
+                } catch (FirebaseAuthException firebaseEx) {
+                    System.err.println("ERRO CRÍTICO: Falha ao fazer rollback do usuário no Firebase: " + firebaseUid);
+                }
+            }
+            throw new RuntimeException("Erro durante o processo de registro. A operação foi revertida.", e);
+        }
     }
 
     private String createFirebaseUser(String email, String password) throws FirebaseAuthException {
