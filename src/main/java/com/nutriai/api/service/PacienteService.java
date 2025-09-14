@@ -124,6 +124,8 @@ public class PacienteService {
                 paciente.getPeso(),
                 paciente.getAltura(),
                 paciente.isAtivo(),
+                paciente.getComorbidades(),
+                paciente.getMedicacoes(),
                 usuarioDto
         );
     }

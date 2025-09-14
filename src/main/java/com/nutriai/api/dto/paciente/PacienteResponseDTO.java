@@ -13,6 +13,8 @@ public record PacienteResponseDTO(
         BigDecimal peso,
         BigDecimal altura,
         boolean ativo,
+        String comorbidades,
+        String medicacoes,
         UsuarioSummaryDTO usuario
 ) {
 }
