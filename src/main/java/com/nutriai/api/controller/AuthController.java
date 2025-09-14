@@ -50,8 +50,8 @@ public class AuthController {
     /** Endpoint para renovar um idToken usando um refreshToken.     */
     
     @PostMapping("/refresh-token")
-    public ResponseEntity<RefreshTokenResponse> refreshToken(@Valid @RequestBody RefreshTokenApiRequest request) {
-        RefreshTokenResponse response = authService.exchangeRefreshToken(request.refreshToken());
+    public ResponseEntity<NewTokensResponseDTO> refreshToken(@Valid @RequestBody RefreshTokenApiRequest request) {
+        NewTokensResponseDTO response = authService.exchangeRefreshToken(request.refreshToken());
         return ResponseEntity.ok(response);
     }
 

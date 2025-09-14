@@ -1,9 +1,6 @@
 package com.nutriai.api.client;
 
-import com.nutriai.api.dto.auth.FirebaseSignInRequest;
-import com.nutriai.api.dto.auth.FirebaseSignInResponse;
-import com.nutriai.api.dto.auth.RefreshTokenRequest;
-import com.nutriai.api.dto.auth.RefreshTokenResponse;
+import com.nutriai.api.dto.auth.*;
 import com.nutriai.api.exception.InvalidLoginCredentialsException;
 import com.nutriai.api.exception.InvalidRefreshTokenException;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,15 +65,18 @@ public class FirebaseAuthClient {
 
 
     // --- Método de Refresh Token ---
-    public RefreshTokenResponse exchangeRefreshToken(String refreshToken){
+    public NewTokensResponseDTO exchangeRefreshToken(String refreshToken){
         RefreshTokenRequest requestBody = new RefreshTokenRequest(REFRESH_TOKEN_GRANT_TYPE, refreshToken);
-        return sendRefreshTokenRequest(requestBody);
+
+        FirebaseTokenExchangeResponse firebaseResponse = sendRefreshTokenRequest(requestBody);
+
+        return new NewTokensResponseDTO(firebaseResponse.idToken(), firebaseResponse.refreshToken());
     }
 
 
     /**     * Envia a requisição para a API de troca de token do Firebase.     */
 
-    private RefreshTokenResponse sendRefreshTokenRequest(RefreshTokenRequest refreshTokenRequest) {
+    private FirebaseTokenExchangeResponse  sendRefreshTokenRequest(RefreshTokenRequest refreshTokenRequest) {
         try {
             return RestClient.create(REFRESH_TOKEN_BASE_URL)
                     .post()
@@ -86,7 +86,7 @@ public class FirebaseAuthClient {
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(refreshTokenRequest)
                     .retrieve()
-                    .body(RefreshTokenResponse.class);
+                    .body(FirebaseTokenExchangeResponse.class);
         } catch (HttpClientErrorException exception) {
             if (exception.getResponseBodyAsString().contains(INVALID_REFRESH_TOKEN_ERROR)) {
                 throw new InvalidRefreshTokenException("Refresh token inválido ou expirado.");

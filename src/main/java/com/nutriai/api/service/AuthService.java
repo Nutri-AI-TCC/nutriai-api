@@ -4,10 +4,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 import com.nutriai.api.client.FirebaseAuthClient;
-import com.nutriai.api.dto.auth.ChangePasswordRequestDTO;
-import com.nutriai.api.dto.auth.FirebaseSignInResponse;
-import com.nutriai.api.dto.auth.RefreshTokenResponse;
-import com.nutriai.api.dto.auth.RegisterUserDTO;
+import com.nutriai.api.dto.auth.*;
 import com.nutriai.api.entity.Usuario;
 import com.nutriai.api.exception.AccountAlreadyExistsException;
 import com.nutriai.api.exception.CpfCnpjAlreadyExistsException;
@@ -105,7 +102,7 @@ public class AuthService {
     }
 
 
-    public RefreshTokenResponse exchangeRefreshToken(String refreshToken) {
+    public NewTokensResponseDTO exchangeRefreshToken(String refreshToken) {
         return firebaseAuthClient.exchangeRefreshToken(refreshToken);
     }
 
