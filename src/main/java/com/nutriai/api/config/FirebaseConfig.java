@@ -23,12 +23,16 @@ import java.io.InputStream;
 @Configuration
 public class FirebaseConfig {
 
+    @Value("${firebase.project-id}")
+    private String projectId;
+
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
         GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
 
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(credentials)
+                .setProjectId(projectId)
                 .build();
 
         if (FirebaseApp.getApps().isEmpty()) {
