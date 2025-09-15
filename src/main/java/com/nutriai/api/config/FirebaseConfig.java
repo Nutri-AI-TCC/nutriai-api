@@ -23,18 +23,16 @@ import java.io.InputStream;
 @Configuration
 public class FirebaseConfig {
 
-    @Value("classpath:/private-key.json")
-    private Resource privateKey;
-
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
-        InputStream credentials = new ByteArrayInputStream(privateKey.getContentAsByteArray());
-        FirebaseOptions firebaseOptions = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(credentials))
+        GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
+
+        FirebaseOptions options = FirebaseOptions.builder()
+                .setCredentials(credentials)
                 .build();
 
         if (FirebaseApp.getApps().isEmpty()) {
-            return FirebaseApp.initializeApp(firebaseOptions);
+            return FirebaseApp.initializeApp(options);
         } else {
             return FirebaseApp.getInstance();
         }
