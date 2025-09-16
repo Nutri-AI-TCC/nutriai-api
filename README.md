@@ -241,7 +241,8 @@ Este endpoint troca um `refreshToken` válido por um novo `idToken`.
 -   **`200 OK`** - Se o token for renovado com sucesso.
     ```json
     {
-        "id_token": "eyJhbGciOi... (um novo idToken)"
+    "idToken": "eyJhbGciOi... (o novo idToken)",
+    "refreshToken": "AMf-vBw... (o novo refreshToken)"
     }
     ```
 -   **`401 Unauthorized`** - Se o `refreshToken` for inválido ou expirado.
@@ -680,11 +681,13 @@ Este endpoint retorna os dados detalhados de um paciente específico, desde que 
     ```json
     {
         "id": 82,
-        "nome": "Carlos Andrade",
+        "nome": "Carlos Andrade da Silva",
         "nascimento": "1985-05-20",
-        "peso": 85.50,
-        "altura": 1.78,
+        "peso": 82.50,
+        "altura": 1.79,
         "ativo": true,
+        "comorbidades": "Hipertensão arterial controlada.",
+        "medicacoes": "Losartana 50mg, uma vez ao dia de manhã.",
         "usuario": {
             "uid": "UID_DO_NUTRICIONISTA_LOGADO",
             "nome": "Nome do Nutricionista",
