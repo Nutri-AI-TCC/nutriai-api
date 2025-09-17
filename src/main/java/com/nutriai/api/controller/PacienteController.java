@@ -1,8 +1,11 @@
 package com.nutriai.api.controller;
 
+import com.nutriai.api.dto.chat.ChatResponseDTO;
+import com.nutriai.api.dto.chat.CreateChatDTO;
 import com.nutriai.api.dto.paciente.CreatePacienteDTO;
 import com.nutriai.api.dto.paciente.PacienteResponseDTO;
 import com.nutriai.api.dto.paciente.UpdatePacienteDTO;
+import com.nutriai.api.service.ChatService;
 import com.nutriai.api.service.PacienteService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -17,9 +20,11 @@ import java.util.List;
 public class PacienteController {
 
     private final PacienteService pacienteService;
+    private final ChatService chatService;
 
-    public PacienteController(PacienteService pacienteService) {
+    public PacienteController(PacienteService pacienteService, ChatService chatService) {
         this.pacienteService = pacienteService;
+        this.chatService = chatService;
     }
 
     /**
@@ -68,6 +73,18 @@ public class PacienteController {
         String nutricionistaUid = authentication.getName();
         PacienteResponseDTO pacienteAtualizado = pacienteService.update(id, nutricionistaUid, dto);
         return ResponseEntity.ok(pacienteAtualizado);
+    }
+
+    @PostMapping("/{pacienteId}/chats")
+    public ResponseEntity<ChatResponseDTO> createChat(
+            @PathVariable Long pacienteId,
+            @Valid @RequestBody CreateChatDTO dto,
+            Authentication authentication) {
+
+        String nutricionistaUid = authentication.getName();
+        ChatResponseDTO novoChatDto = chatService.create(dto, pacienteId, nutricionistaUid);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(novoChatDto);
     }
 
 

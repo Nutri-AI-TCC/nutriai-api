@@ -1,16 +1,19 @@
 package com.nutriai.api.controller;
 
 import com.nutriai.api.dto.chat.ChatResponseDTO;
-import com.nutriai.api.dto.chat.CreateChatDTO;
+import com.nutriai.api.dto.chat.HistoricoResponseDTO;
 import com.nutriai.api.service.ChatService;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/pacientes/{pacienteId}/chats") // Rota aninhada
+@RequestMapping("/api/v1/chats") // A rota base é para chats
 public class ChatController {
 
     private final ChatService chatService;
@@ -19,16 +22,25 @@ public class ChatController {
         this.chatService = chatService;
     }
 
-    @PostMapping
-    public ResponseEntity<ChatResponseDTO> createChat(
-            @PathVariable Long pacienteId,
-            @Valid @RequestBody CreateChatDTO dto,
+    /**
+     * Retorna todo o histórico de mensagens de uma sessão de chat específica.
+     */
+    @GetMapping("/{chatId}/historico")
+    public ResponseEntity<List<HistoricoResponseDTO>> getChatHistory(
+            @PathVariable Long chatId,
             Authentication authentication) {
 
         String nutricionistaUid = authentication.getName();
-        // O serviço agora retorna o DTO diretamente
-        ChatResponseDTO novoChatDto = chatService.create(dto, pacienteId, nutricionistaUid);
+        List<HistoricoResponseDTO> historico = chatService.getHistoricoDoChat(chatId, nutricionistaUid);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(novoChatDto);
+        return ResponseEntity.ok(historico);
     }
+
+    @GetMapping
+    public ResponseEntity<List<ChatResponseDTO>> getAllMyChats(Authentication authentication) {
+        String nutricionistaUid = authentication.getName();
+        List<ChatResponseDTO> chats = chatService.findAllByNutricionistaUid(nutricionistaUid);
+        return ResponseEntity.ok(chats);
+    }
+
 }

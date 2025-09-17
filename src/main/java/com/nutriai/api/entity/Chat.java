@@ -31,6 +31,6 @@ public class Chat {
     @JoinColumn(name = "ID_PACIENTE", nullable = false)
     private Paciente paciente;
 
-//    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Mensagem> mensagens;
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Historico> historico;
 }

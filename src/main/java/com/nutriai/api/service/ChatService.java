@@ -1,41 +1,49 @@
 package com.nutriai.api.service;
 
 import com.nutriai.api.dto.chat.CreateChatDTO;
+import com.nutriai.api.dto.chat.HistoricoResponseDTO;
 import com.nutriai.api.entity.Chat;
+import com.nutriai.api.entity.Historico;
 import com.nutriai.api.entity.Paciente;
+import com.nutriai.api.exception.ResourceNotFoundException;
 import com.nutriai.api.repository.ChatRepository;
+import com.nutriai.api.repository.HistoricoRepository;
+import com.nutriai.api.repository.PacienteRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.nutriai.api.dto.chat.ChatResponseDTO;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ChatService {
 
     private final ChatRepository chatRepository;
     private final PacienteService pacienteService;
+    private final HistoricoRepository historicoRepository;
 
-    public ChatService(ChatRepository chatRepository, PacienteService pacienteService) {
+    // Construtor sem a dependência duplicada
+    public ChatService(ChatRepository chatRepository, PacienteService pacienteService, HistoricoRepository historicoRepository) {
         this.chatRepository = chatRepository;
         this.pacienteService = pacienteService;
+        this.historicoRepository = historicoRepository;
     }
 
     @Transactional
     public ChatResponseDTO create(CreateChatDTO dto, Long pacienteId, String nutricionistaUid) {
-        // 1. Valida se o nutricionista é dono do paciente
-        Paciente paciente = pacienteService.findByIdAndCheckOwnership(pacienteId, nutricionistaUid);
+        // ✅ UMA ÚNICA CHAMADA: Valida a posse e já retorna a entidade Paciente.
+        Paciente paciente = pacienteService.findEntityByIdAndUsuarioUid(pacienteId, nutricionistaUid);
 
-        // 2. Cria a nova entidade Chat
         Chat novoChat = new Chat();
         novoChat.setTitulo(dto.titulo());
         novoChat.setDataCriacao(LocalDateTime.now());
-        novoChat.setPaciente(paciente);
+        novoChat.setPaciente(paciente); // Usa a entidade retornada
 
-        // 3. Salva no banco
         Chat chatSalvo = chatRepository.save(novoChat);
 
-        // 4. Converte para DTO antes de retornar
         return convertToDto(chatSalvo);
     }
 
@@ -50,4 +58,50 @@ public class ChatService {
                 chat.getPaciente().getId() // Pega apenas o ID do paciente
         );
     }
+
+    /**
+     * Busca o histórico de mensagens de um chat específico, validando a permissão do usuário.
+     */
+    @Transactional(readOnly = true)
+    public List<HistoricoResponseDTO> getHistoricoDoChat(Long chatId, String nutricionistaUid) {
+        // 1. Validação de Segurança e Posse
+        Chat chat = chatRepository.findById(chatId)
+                .orElseThrow(() -> new ResourceNotFoundException("Chat não encontrado com o ID: " + chatId));
+
+        if (!chat.getPaciente().getUsuario().getUid().equals(nutricionistaUid)) {
+            throw new AccessDeniedException("Você não tem permissão para acessar este chat.");
+        }
+
+        // 2. Busca o Histórico no banco de dados
+        List<Historico> historico = historicoRepository.findByChatIdOrderByDataEnvioAsc(chatId);
+
+        // 3. Converte a lista de Entidades para uma lista de DTOs
+        return historico.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    private HistoricoResponseDTO convertToDto(Historico historico) {
+        return new HistoricoResponseDTO(
+                historico.getId(),
+                historico.getConteudo(),
+                historico.getDataEnvio(),
+                historico.getRemetente(),
+                historico.getChat().getId()
+        );
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<ChatResponseDTO> findAllByNutricionistaUid(String nutricionistaUid) {
+        // 1. Usa o novo método do repositório para buscar as entidades
+        List<Chat> chats = chatRepository.findAllByPaciente_Usuario_UidOrderByDataCriacaoDesc(nutricionistaUid);
+
+        // 2. Converte a lista de entidades para uma lista de DTOs e a retorna
+        return chats.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+
 }

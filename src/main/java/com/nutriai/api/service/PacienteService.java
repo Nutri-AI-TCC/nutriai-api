@@ -82,6 +82,22 @@ public class PacienteService {
         return convertToDto(paciente);
     }
 
+    @Transactional(readOnly = true)
+    public Paciente findEntityByIdAndUsuarioUid(Long pacienteId, String usuarioUid) {
+        // 1. Busca o paciente pelo ID.
+        Paciente paciente = pacienteRepository.findById(pacienteId)
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado com o ID: " + pacienteId));
+
+        // 2. Garante que o paciente pertence ao usuário logado.
+        if (!paciente.getUsuario().getUid().equals(usuarioUid)) {
+            throw new AccessDeniedException("Você não tem permissão para acessar este paciente.");
+        }
+
+        // 3. Retorna a ENTIDADE completa
+        return paciente;
+    }
+
+
     /** Atualiza os dados de um paciente existente, após verificar a permissão do usuário.     */
     @Transactional
     public PacienteResponseDTO update(Long pacienteId, String usuarioUid, UpdatePacienteDTO dto) {
