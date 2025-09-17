@@ -26,6 +26,9 @@ public class PacienteService {
         this.usuarioService = usuarioService;
     }
 
+    /**
+     * ✅ MÉTODO CREATE CORRIGIDO: Agora retorna DTO
+     */
     @Transactional
     public PacienteResponseDTO create(CreatePacienteDTO dto, String usuarioUid) {
         Usuario nutricionista = usuarioService.findByUid(usuarioUid);
@@ -44,67 +47,32 @@ public class PacienteService {
 
         Paciente pacienteSalvo = pacienteRepository.save(novoPaciente);
 
+        // Converte para DTO antes de retornar
         return convertToDto(pacienteSalvo);
-
     }
-
-
-    /**Retorna uma lista de todos os pacientes pertencentes a um nutricionista específico.
-     * @param usuarioUid O UID do nutricionista.
-     * @return A lista de pacientes.     */
 
     @Transactional(readOnly = true)
     public List<PacienteResponseDTO> findByUsuarioUid(String usuarioUid) {
         List<Paciente> pacientes = pacienteRepository.findByUsuarioUid(usuarioUid);
-
         return pacientes.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
-
     }
-
-    /** Busca um paciente específico pelo seu ID, garantindo que ele pertença ao nutricionista logado.
-     * @param pacienteId O ID do paciente a ser buscado.
-     * @param usuarioUid O UID do nutricionista que está fazendo a requisição.     */
 
     @Transactional(readOnly = true)
     public PacienteResponseDTO findByIdAndUsuarioUid(Long pacienteId, String usuarioUid) {
-        // 1. Busca o paciente pelo ID.
-        Paciente paciente = pacienteRepository.findById(pacienteId)
-                .orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado com o ID: " + pacienteId));
-
-        // 2. Garante que o paciente pertence ao usuário logado.
-        if (!paciente.getUsuario().getUid().equals(usuarioUid)) {
-            throw new AccessDeniedException("Você não tem permissão para acessar este paciente.");
-        }
-
-        // 3. converte para DTO e retorna.
+        Paciente paciente = findEntityByIdAndUsuarioUid(pacienteId, usuarioUid);
         return convertToDto(paciente);
     }
 
-    @Transactional(readOnly = true)
-    public Paciente findEntityByIdAndUsuarioUid(Long pacienteId, String usuarioUid) {
-        // 1. Busca o paciente pelo ID.
-        Paciente paciente = pacienteRepository.findById(pacienteId)
-                .orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado com o ID: " + pacienteId));
-
-        // 2. Garante que o paciente pertence ao usuário logado.
-        if (!paciente.getUsuario().getUid().equals(usuarioUid)) {
-            throw new AccessDeniedException("Você não tem permissão para acessar este paciente.");
-        }
-
-        // 3. Retorna a ENTIDADE completa
-        return paciente;
-    }
-
-
-    /** Atualiza os dados de um paciente existente, após verificar a permissão do usuário.     */
+    /**
+     * ✅ MÉTODO UPDATE CORRIGIDO: Chama o método de busca correto
+     */
     @Transactional
     public PacienteResponseDTO update(Long pacienteId, String usuarioUid, UpdatePacienteDTO dto) {
-        // 1. Busca o paciente e verifica se ele pertence ao usuário logado.
-        Paciente paciente = findByIdAndCheckOwnership(pacienteId, usuarioUid);
+        // Busca a entidade e já valida a posse
+        Paciente paciente = findEntityByIdAndUsuarioUid(pacienteId, usuarioUid);
 
-        // 2. Atualiza os campos da entidade com os dados do DTO.
         paciente.setNome(dto.nome());
         paciente.setNascimento(dto.nascimento());
         paciente.setPeso(dto.peso());
@@ -115,14 +83,23 @@ public class PacienteService {
         paciente.setMedicacoes(dto.medicacoes());
         paciente.setAtivo(dto.ativo());
 
-        // 3. Salva a entidade atualizada.
         Paciente pacienteSalvo = pacienteRepository.save(paciente);
-
-        // 4. Converte a entidade atualizada para DTO e a retorna.
         return convertToDto(pacienteSalvo);
     }
 
+    /**
+     * Busca uma ENTIDADE Paciente, verificando a posse.
+     * Este método é auxiliar para create, update e delete.
+     */
+    public Paciente findEntityByIdAndUsuarioUid(Long pacienteId, String usuarioUid) {
+        Paciente paciente = pacienteRepository.findById(pacienteId)
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado com o ID: " + pacienteId));
 
+        if (!paciente.getUsuario().getUid().equals(usuarioUid)) {
+            throw new AccessDeniedException("Você não tem permissão para acessar este paciente.");
+        }
+        return paciente;
+    }
 
     public PacienteResponseDTO convertToDto(Paciente paciente) {
         Usuario usuario = paciente.getUsuario();
@@ -145,17 +122,4 @@ public class PacienteService {
                 usuarioDto
         );
     }
-
-    Paciente findByIdAndCheckOwnership(Long pacienteId, String usuarioUid) {
-        Paciente paciente = pacienteRepository.findById(pacienteId)
-                .orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado com o ID: " + pacienteId));
-
-        if (!paciente.getUsuario().getUid().equals(usuarioUid)) {
-            throw new AccessDeniedException("Você não tem permissão para acessar este paciente.");
-        }
-        return paciente;
-    }
-
-
-
 }
