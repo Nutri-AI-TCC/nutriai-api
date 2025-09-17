@@ -864,6 +864,95 @@ Este endpoint inicia uma nova sessão de chat, associada a um paciente específi
 -   **`403 Forbidden`** - Se o `pacienteId` não pertencer ao nutricionista autenticado.
 -   **`404 Not Found`** - Se o `pacienteId` não existir.
 
+---
+
+### 2. Listar Todos os Chats do Nutricionista
+
+Este endpoint retorna uma lista de todas as sessões de chat iniciadas pelo nutricionista autenticado, ordenadas da mais recente para a mais antiga.
+
+-   **Endpoint:** `GET /api/v1/chats`
+-   **Método:** `GET`
+
+#### Requisição
+
+| Atributo      | Descrição                                         |
+| :------------ | :------------------------------------------------ |
+| **URL** | `/api/v1/chats`                                   |
+| **Método** | `GET`                                             |
+| **Cabeçalhos**| `Authorization: Bearer <seu_idToken_obtido_no_login>` |
+
+**Corpo da Requisição:**
+- Nenhum
+
+#### Respostas
+
+-   **`200 OK`** - Retorna uma lista com os DTOs dos chats.
+    ```json
+    [
+        {
+            "id": 102,
+            "titulo": "Chat mais recente com Paciente B",
+            "dataCriacao": "2025-09-18T11:00:00",
+            "pacienteId": 83
+        },
+        {
+            "id": 101,
+            "titulo": "Chat antigo com Paciente A",
+            "dataCriacao": "2025-09-17T15:30:00",
+            "pacienteId": 82
+        }
+    ]
+    ```
+-   **`401 Unauthorized`** - Se o `idToken` for inválido ou ausente.
+
+---
+
+### 3. Buscar Histórico de um Chat Específico
+
+Este endpoint retorna todo o histórico de mensagens (do usuário e da IA) para uma sessão de chat específica.
+
+-   **Endpoint:** `GET /api/v1/chats/{chatId}/historico`
+-   **Método:** `GET`
+
+#### Requisição
+
+| Atributo | Descrição |
+| :--- | :--- |
+| **URL** | `/api/v1/chats/{chatId}/historico` |
+| **Parâmetros de URL** | `chatId` (obrigatório): O ID numérico do chat cujo histórico você deseja buscar. |
+| **Método** | `GET` |
+| **Cabeçalhos**| `Authorization: Bearer <seu_idToken_obtido_no_login>` |
+
+**Corpo da Requisição:**
+- Nenhum
+
+#### Respostas
+
+-   **`200 OK`** - Retorna uma lista com as mensagens do histórico, em ordem cronológica.
+    ```json
+    [
+        {
+            "id": 1,
+            "conteudo": "Olá, estou me sentindo sem energia.",
+            "dataEnvio": "2025-09-18T11:00:10",
+            "remetente": "USUARIO",
+            "chatId": 102
+        },
+        {
+            "id": 2,
+            "conteudo": "Entendo. Para te ajudar com isso, me fale mais sobre sua alimentação hoje.",
+            "dataEnvio": "2025-09-18T11:00:15",
+            "remetente": "IA",
+            "chatId": 102
+        }
+    ]
+    ```
+-   **`401 Unauthorized`** - Se o `idToken` for inválido ou ausente.
+-   **`403 Forbidden`** - Se o chat não pertencer ao nutricionista autenticado.
+-   **`404 Not Found`** - Se o chat com o `chatId` informado não existir.
+
+---
+
 
 ## ⏭️ Próximos Passos
 [ ] Implementar a lógica de negócio no DietaService.
