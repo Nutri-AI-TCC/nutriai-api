@@ -130,7 +130,7 @@ public class PacienteService {
         );
     }
 
-    private Paciente findByIdAndCheckOwnership(Long pacienteId, String usuarioUid) {
+    Paciente findByIdAndCheckOwnership(Long pacienteId, String usuarioUid) {
         Paciente paciente = pacienteRepository.findById(pacienteId)
                 .orElseThrow(() -> new ResourceNotFoundException("Paciente não encontrado com o ID: " + pacienteId));
 
