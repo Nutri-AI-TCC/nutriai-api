@@ -16,6 +16,14 @@ API backend para a plataforma NutriAI, projetada para atender nutricionistas no 
 - [Documentação da API (Endpoints)](#-documentação-da-api-endpoints)
 - [Próximos Passos](#-próximos-passos)
 
+## 🕹️ Documentação da API (Endpoints)
+
+A seguir estão detalhados os endpoints disponíveis na NutriAI API.
+
+**Navegação Rápida:**
+[Endpoints de Autenticação](#endpoints-de-autenticação) | [Endpoints de Usuários](#endpoints-de-usuários-nutricionista) | [Endpoints de Pacientes](#endpoints-de-pacientes) | [Endpoints de Chat](#endpoints-de-chat-conversas-com-ia)
+
+
 ## ✨ Funcionalidades
 
 A API implementa um módulo de autenticação completo e seguro, além de endpoints de negócio protegidos.
@@ -810,6 +818,51 @@ Este endpoint permite que o usuário autenticado exclua permanentemente um de se
 -   **`404 Not Found`** - Se o paciente com o `id` informado não existir.
 
 ---
+
+## Endpoints de Chat (Conversas com IA)
+
+Endpoints para gerenciar as sessões de chat entre um nutricionista e a inteligência artificial para um paciente específico. Todas as rotas nesta seção são protegidas e exigem autenticação.
+
+### 1. Criar um Novo Chat para um Paciente
+
+Este endpoint inicia uma nova sessão de chat, associada a um paciente específico do nutricionista logado.
+
+-   **Endpoint:** `/api/v1/pacientes/{pacienteId}/chats`
+-   **Método:** `POST`
+
+#### Requisição
+
+| Atributo | Descrição |
+| :--- | :--- |
+| **URL** | `/api/v1/pacientes/{pacienteId}/chats` |
+| **Parâmetros de URL** | `pacienteId` (obrigatório): O ID numérico do paciente para o qual o chat será criado. |
+| **Método** | `POST` |
+| **Cabeçalhos**| `Content-Type: application/json`<br>`Authorization: Bearer <seu_idToken_obtido_no_login>` |
+
+**Corpo da Requisição:**
+ ```json
+{
+  "titulo": "Acompanhamento Semanal - Foco em Proteínas"
+}
+
+ ```
+
+ #### Respostas
+
+-   **`201 Created`** - Se o chat for criado com sucesso.
+    ```json
+    {
+        "id": 1,
+        "titulo": "Acompanhamento Semanal - Foco em Proteínas",
+        "dataCriacao": "2025-09-16T21:00:00",
+        "pacienteId": 82
+    }
+    ```
+
+-   **`400 Bad Request`** - Se o título estiver em branco.
+-   **`401 Unauthorized`** - Se o `idToken` for inválido ou ausente.
+-   **`403 Forbidden`** - Se o `pacienteId` não pertencer ao nutricionista autenticado.
+-   **`404 Not Found`** - Se o `pacienteId` não existir.
 
 
 ## ⏭️ Próximos Passos
