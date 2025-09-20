@@ -16,19 +16,20 @@ public class Dieta {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "dieta_seq_gen")
     @SequenceGenerator(name = "dieta_seq_gen", sequenceName = "DIETA_SEQ", allocationSize = 1)
     @Column(name = "ID_DIETA")
-    private long id;
+    private Long id;
 
-    @Column(name = "ARQUIVO_DIETA")
-    private String linkArquivo;
+    @Column(name = "NOME_DOCUMENTO_DIETA", nullable = false)
+    private String nomeDocumento;
 
-    @Column(name = "NOME_DOCUMENTO_DIETA")
-    private String nomeArquivo;
+    @Column(name = "ARQUIVO_DIETA", nullable = false) // Armazenará a URL do arquivo
+    private String arquivoUrl;
 
-    @Column(name = "ID_PACIENTE_DIETA")
-    private long idPaciente;
+    @Column(name = "ATIVO_DIETA", columnDefinition = "NUMBER(1)")
+    private boolean ativo;
 
-    @Column(name = "ATIVO_DIETA")
-    private int ativo_dieta;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_PACIENTE_DIETA", nullable = false)
+    private Paciente paciente;
 
 }
