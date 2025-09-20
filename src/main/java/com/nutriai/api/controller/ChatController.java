@@ -5,10 +5,7 @@ import com.nutriai.api.dto.chat.HistoricoResponseDTO;
 import com.nutriai.api.service.ChatService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -42,5 +39,28 @@ public class ChatController {
         List<ChatResponseDTO> chats = chatService.findAllByNutricionistaUid(nutricionistaUid);
         return ResponseEntity.ok(chats);
     }
+
+    /**
+     * ✅ NOVO ENDPOINT
+     * Deleta uma sessão de chat específica pelo seu ID.
+     * @param chatId O ID do chat a ser deletado, vindo da URL.
+     * @param authentication Fornecido pelo Spring Security com os dados do usuário logado.
+     * @return ResponseEntity com status 204 No Content em caso de sucesso.
+     */
+    @DeleteMapping("/{chatId}")
+    public ResponseEntity<Void> deleteChat(
+            @PathVariable Long chatId,
+            Authentication authentication) {
+
+        // Pega o UID do nutricionista logado.
+        String nutricionistaUid = authentication.getName();
+
+        // Chama o serviço para realizar a exclusão, que já contém a validação de segurança.
+        chatService.delete(chatId, nutricionistaUid);
+
+        // Retorna o status 204 No Content, o padrão para DELETE bem-sucedido.
+        return ResponseEntity.noContent().build();
+    }
+
 
 }

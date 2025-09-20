@@ -103,5 +103,29 @@ public class ChatService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Deleta uma sessão de chat e todo o seu histórico, após validar a posse.
+     * @param chatId O ID do chat a ser deletado.
+     * @param nutricionistaUid O UID do nutricionista que está fazendo a requisição.
+     * @throws ResourceNotFoundException se o chat não for encontrado.
+     * @throws AccessDeniedException se o chat não pertencer ao nutricionista.
+     */
+    @Transactional
+    public void delete(Long chatId, String nutricionistaUid) {
+        // 1. Busca o chat pelo ID. Se não existir, lança uma exceção 404.
+        Chat chat = chatRepository.findById(chatId)
+                .orElseThrow(() -> new ResourceNotFoundException("Chat não encontrado com o ID: " + chatId));
+
+        // 2. VERIFICAÇÃO DE POSSE: Garante que o chat pertence ao usuário logado.
+        if (!chat.getPaciente().getUsuario().getUid().equals(nutricionistaUid)) {
+            throw new AccessDeniedException("Você não tem permissão para deletar este chat.");
+        }
+
+        // 3. Deleta o chat.
+        // Graças ao @OneToMany(cascade = CascadeType.ALL) na entidade Chat,
+        // ao deletar o chat, o JPA automaticamente deletará todas as mensagens (Historico) associadas.
+        chatRepository.delete(chat);
+    }
+
 
 }
