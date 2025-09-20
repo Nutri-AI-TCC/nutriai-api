@@ -21,7 +21,7 @@ API backend para a plataforma NutriAI, projetada para atender nutricionistas no 
 A seguir estão detalhados os endpoints disponíveis na NutriAI API.
 
 **Navegação Rápida:**
-[Endpoints de Autenticação](#endpoints-de-autenticação) | [Endpoints de Usuários](#endpoints-de-usuários-nutricionista) | [Endpoints de Pacientes](#endpoints-de-pacientes) | [Endpoints de Chat](#endpoints-de-chat-conversas-com-ia)
+[Endpoints de Autenticação](#endpoints-de-autenticação) | [Endpoints de Dietas](#endpoints-de-dietas) | [Endpoints de Usuários](#endpoints-de-usuários) | [Endpoints de Pacientes](#endpoints-de-pacientes) | [Endpoints de Chat](#endpoints-de-chat-conversas-com-ia)
 
 
 ## ✨ Funcionalidades
@@ -318,51 +318,47 @@ Este endpoint permite que um usuário autenticado altere sua própria senha, exi
     ```
 
 ---
-## Endpoints de Dietas
+### Endpoints de Dietas
+Rotas protegidas para gerenciar os planos alimentares (dietas) de um paciente.
 
-### 1. Buscar Todas as Dietas (Rota Protegida)
+#### 1. Criar uma Nova Dieta (com Upload de Arquivo)
 
-Este endpoint de exemplo retorna uma lista de dietas e exige autenticação.
+- **Endpoint:** `POST /api/v1/pacientes/{pacienteId}/dietas`
+- **Autenticação:** `Bearer Token` obrigatório.
+- **Descrição:** Cria um novo plano alimentar, fazendo o upload de um arquivo para o Object Storage e salvando a referência no banco de dados.
+- **Tipo de Requisição:** `multipart/form-data`
 
--   **Endpoint:** `/api/v1/dietas`
--   **Método:** `GET`
+##### Requisição
 
-#### Requisição
-
-| Atributo      | Descrição                                         |
-| :------------ | :------------------------------------------------ |
-| **URL** | `/api/v1/dietas`                                  |
-| **Método** | `GET`                                             |
+| Atributo | Descrição |
+| :--- | :--- |
+| **URL** | `/api/v1/pacientes/{pacienteId}/dietas` |
+| **Parâmetros de URL** | `pacienteId` (obrigatório): O ID numérico do paciente para o qual a dieta será criada. |
+| **Método** | `POST` |
 | **Cabeçalhos**| `Authorization: Bearer <seu_idToken_obtido_no_login>` |
 
-**Corpo da Requisição:**
-- Nenhum
+**Corpo da Requisição (form-data):**
+| Chave (Key) | Valor (Value) | Tipo |
+| :--- | :--- | :--- |
+| `nomeDocumento` | `Plano Alimentar - Setembro 2025` | Text |
+| `arquivo` | *(selecione o arquivo do seu computador)* | File |
 
-#### Respostas
+##### Respostas
 
--   **`200 OK`** - Se o `idToken` for válido.
-    ```json
-    [
-        {
-            "id": 1,
-            "nome": "Dieta de Baixo Carboidrato",
-            "ativo": true
-        },
-        {
-            "id": 2,
-            "nome": "Dieta Mediterrânea",
-            "ativo": true
-        }
-    ]
-    ```
--   **`401 Unauthorized`** - Se o cabeçalho `Authorization` estiver ausente, ou se o `idToken` for inválido ou expirado.
-    ```json
-    {
-        "title": "User Unauthorized",
-        "status": 401,
-        "detail": "A autenticação falhou: o token está ausente, é inválido ou expirado."
-    }
-    ```
+- **`201 Created`** - Se a dieta for criada e o arquivo for enviado com sucesso.
+  ```json
+  {
+      "id": 1,
+      "nomeDocumento": "Plano Alimentar - Setembro 2025",
+      "arquivoUrl": "[https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/seu-namespace/b/nutriai-arquivo-dieta/o/pacientes/82/dietas/uuid-aleatorio-dieta_exemplo.pdf](https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/seu-namespace/b/nutriai-arquivo-dieta/o/pacientes/82/dietas/uuid-aleatorio-dieta_exemplo.pdf)",
+      "ativo": true,
+      "pacienteId": 82
+  }
+  ```
+-   **`400 Bad Request`** - Se os dados do formulário (nomeDocumento ou arquivo) estiverem ausentes.
+-   **`401 Unauthorized`** - Se o `idToken` for inválido ou ausente.
+-   **`403 Forbidden`** - Se o chat não pertencer ao nutricionista autenticado.
+-   **`404 Not Found`** - Se o chat com o `chatId` informado não existir.
 
 ---
 ## Endpoints de Usuários
