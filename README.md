@@ -946,6 +946,34 @@ Este endpoint retorna todo o histórico de mensagens (do usuário e da IA) para 
 
 ---
 
+#### 4. Deletar um Chat Específico (Rota Protegida)
+
+Este endpoint permite que o usuário autenticado exclua permanentemente uma sessão de chat e todo o seu histórico de mensagens. **Esta é uma operação irreversível.**
+
+-   **Endpoint:** `DELETE /api/v1/chats/{chatId}`
+-   **Método:** `DELETE`
+
+##### Requisição
+
+| Atributo | Descrição |
+| :--- | :--- |
+| **URL** | `/api/v1/chats/{chatId}` |
+| **Parâmetros de URL** | `chatId` (obrigatório): O ID numérico do chat a ser deletado. |
+| **Método** | `DELETE` |
+| **Cabeçalhos**| `Authorization: Bearer <seu_idToken_obtido_no_login>` |
+
+**Corpo da Requisição:**
+- Nenhum
+
+##### Respostas
+
+-   **`204 No Content`** - Se o chat for deletado com sucesso. O corpo da resposta estará vazio.
+-   **`401 Unauthorized`** - Se o `idToken` for inválido ou ausente.
+-   **`403 Forbidden`** - Se o chat não pertencer ao nutricionista autenticado.
+-   **`404 Not Found`** - Se o chat com o `chatId` informado não existir.
+
+---
+
 
 ## ⏭️ Próximos Passos
 [ ] Implementar a lógica de negócio no DietaService.
