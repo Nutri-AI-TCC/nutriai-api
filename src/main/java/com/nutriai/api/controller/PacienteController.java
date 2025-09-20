@@ -80,8 +80,8 @@ public class PacienteController {
             Authentication authentication) {
 
         String nutricionistaUid = authentication.getName();
-        ChatResponseDTO novoChatDto = chatService.create(dto, pacienteId, nutricionistaUid);
+        chatService.create(dto, pacienteId, nutricionistaUid);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(novoChatDto);
+        return ResponseEntity.noContent().build();
     }
 }
