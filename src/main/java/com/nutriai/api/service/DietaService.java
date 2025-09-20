@@ -1,25 +1,66 @@
 package com.nutriai.api.service;
 
+import com.nutriai.api.dto.dieta.DietaResponseDTO;
 import com.nutriai.api.entity.Dieta;
+import com.nutriai.api.entity.Paciente;
 import com.nutriai.api.repository.DietaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.io.IOException;
 
 @Service
 public class DietaService {
 
     private final DietaRepository dietaRepository;
+    private final PacienteService pacienteService;
+    private final FileStorageService fileStorageService;
 
-    public DietaService(DietaRepository dietaRepository) {
+    @Value("${oci.objectstorage.namespace}")
+    private String namespace;
+
+    @Value("${oci.objectstorage.bucket-name}")
+    private String bucketName;
+
+    public DietaService(DietaRepository dietaRepository, PacienteService pacienteService, FileStorageService fileStorageService) {
         this.dietaRepository = dietaRepository;
+        this.pacienteService = pacienteService;
+        this.fileStorageService = fileStorageService;
     }
 
-    public List<Dieta> getAllDietas() {
-        return dietaRepository.findAll();
+    @Transactional
+    public DietaResponseDTO create(Long pacienteId, String nutricionistaUid, String nomeDocumento, MultipartFile arquivo) throws IOException {
+        // 1. Valida se o nutricionista é dono do paciente.
+        Paciente paciente = pacienteService.findEntityByIdAndUsuarioUid(pacienteId, nutricionistaUid);
+
+        // 2. Faz o upload do arquivo para o bucket na OCI.
+        String pathPrefix = "pacientes/" + pacienteId + "/dietas/";
+        String objectName = fileStorageService.upload(arquivo, pathPrefix);
+
+        // 3. Monta a URL completa do arquivo salvo.
+        String arquivoUrl = "https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/" + namespace + "/b/" + bucketName + "/o/" + objectName;
+
+        // 4. Cria e salva a nova entidade Dieta no banco de dados.
+        Dieta novaDieta = new Dieta();
+        novaDieta.setNomeDocumento(nomeDocumento);
+        novaDieta.setArquivoUrl(arquivoUrl);
+        novaDieta.setAtivo(true);
+        novaDieta.setPaciente(paciente);
+
+        Dieta dietaSalva = dietaRepository.save(novaDieta);
+
+        return convertToDto(dietaSalva);
     }
 
+    private DietaResponseDTO convertToDto(Dieta dieta) {
+        return new DietaResponseDTO(
+                dieta.getId(),
+                dieta.getNomeDocumento(),
+                dieta.getArquivoUrl(),
+                dieta.isAtivo(),
+                dieta.getPaciente().getId()
+        );
+    }
 }

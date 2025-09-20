@@ -21,7 +21,7 @@ public class Dieta {
     @Column(name = "NOME_DOCUMENTO_DIETA", nullable = false)
     private String nomeDocumento;
 
-    @Column(name = "ARQUIVO_DIETA", nullable = false) // Armazenará a URL do arquivo
+    @Column(name = "ARQUIVO_DIETA", nullable = false)
     private String arquivoUrl;
 
     @Column(name = "ATIVO_DIETA", columnDefinition = "NUMBER(1)")
