@@ -849,15 +849,8 @@ Este endpoint inicia uma nova sessão de chat, associada a um paciente específi
 
  #### Respostas
 
--   **`201 Created`** - Se o chat for criado com sucesso.
-    ```json
-    {
-        "id": 1,
-        "titulo": "Acompanhamento Semanal - Foco em Proteínas",
-        "dataCriacao": "2025-09-16T21:00:00",
-        "pacienteId": 82
-    }
-    ```
+-   **`204 No content`** - Se o chat for criado com sucesso.
+    O corpo da resposta estará vazio
 
 -   **`400 Bad Request`** - Se o título estiver em branco.
 -   **`401 Unauthorized`** - Se o `idToken` for inválido ou ausente.
