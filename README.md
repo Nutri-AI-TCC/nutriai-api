@@ -323,6 +323,8 @@ Rotas protegidas para gerenciar os planos alimentares (dietas) de um paciente.
 
 #### 1. Criar uma Nova Dieta (com Upload de Arquivo)
 
+Este endpoint cria um novo plano alimentar para um paciente específico, fazendo o upload de um arquivo para o Object Storage e salvando sua referência no banco de dados.
+
 - **Endpoint:** `POST /api/v1/pacientes/{pacienteId}/dietas`
 - **Autenticação:** `Bearer Token` obrigatório.
 - **Descrição:** Cria um novo plano alimentar, fazendo o upload de um arquivo para o Object Storage e salvando a referência no banco de dados.
@@ -361,6 +363,86 @@ Rotas protegidas para gerenciar os planos alimentares (dietas) de um paciente.
 -   **`404 Not Found`** - Se o chat com o `chatId` informado não existir.
 
 ---
+
+## 2. Listar Dietas de um Paciente
+
+Este endpoint retorna uma lista com todos os planos alimentares associados a um paciente específico.
+
+- **Endpoint:** `/api/v1/pacientes/{pacienteId}/dietas`  
+- **Método:** `GET`
+
+---
+
+### 🔹 Requisição
+
+| Atributo            | Descrição                                                                 |
+|----------------------|---------------------------------------------------------------------------|
+| **URL**              | `/api/v1/pacientes/{pacienteId}/dietas`                                  |
+| **Parâmetros de URL**| `pacienteId` (**obrigatório**) - O ID numérico do paciente.              |
+| **Método**           | `GET`                                                                    |
+| **Cabeçalhos**       | `Authorization: Bearer <seu_idToken_obtido_no_login>`                    |
+| **Corpo da Requisição** | Nenhum                                                                |
+
+---
+
+### 🔹 Respostas
+
+- **200 OK** - Retorna uma lista com os DTOs das dietas.  
+  **Exemplo de resposta:**
+
+ ```json
+[
+  {
+    "id": 1,
+    "nomeDocumento": "Plano Alimentar - Setembro 2025",
+    "arquivoUrl": "https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/...",
+    "ativo": true,
+    "pacienteId": 82
+  },
+  {
+    "id": 2,
+    "nomeDocumento": "Dieta de Reavaliação - Outubro 2025",
+    "arquivoUrl": "https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/...",
+    "ativo": true,
+    "pacienteId": 82
+  }
+]
+ ```
+
+-   **`200 OK`** -  Se o paciente não tiver dietas, retorna uma lista vazia [].
+-   **`401 Unauthorized`** - Se o `idToken` for inválido ou ausente.
+-   **`403 Forbidden`** - Se o chat não pertencer ao nutricionista autenticado.
+-   **`404 Not Found`** - Se o chat com o `chatId` informado não existir.
+
+---
+
+### 3. Deletar uma Dieta (Rota Protegida)
+Este endpoint permite que o usuário autenticado exclua permanentemente um plano alimentar. A operação remove o registro do banco de dados e o arquivo associado do Object Storage. **Esta é uma operação irreversível.**
+
+-   **Endpoint:** `DELETE /api/v1/pacientes/{pacienteId}/dietas/{dietaId}`
+-   **Método:** `DELETE`
+
+#### Requisição
+
+| Atributo | Descrição |
+| :--- | :--- |
+| **URL** | `/api/v1/pacientes/{pacienteId}/dietas/{dietaId}` |
+| **Parâmetros de URL** | `pacienteId` (obrigatório): O ID do paciente.<br>`dietaId` (obrigatório): O ID da dieta a ser deletada. |
+| **Método** | `DELETE` |
+| **Cabeçalhos**| `Authorization: Bearer <seu_idToken_obtido_no_login>` |
+
+**Corpo da Requisição:**
+- Nenhum
+
+#### Respostas
+
+-   **`204 No Content`** - Se a dieta for deletada com sucesso. O corpo da resposta estará vazio.
+-   **`401 Unauthorized`** - Se o `idToken` for inválido ou ausente.
+-   **`403 Forbidden`** - Se o paciente ou a dieta não pertencer ao nutricionista autenticado.
+-   **`404 Not Found`** - Se a dieta com o `dietaId` informado não existir.
+
+---
+
 ## Endpoints de Usuários
 
 
