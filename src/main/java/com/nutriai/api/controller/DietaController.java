@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/pacientes/{pacienteId}/dietas")
@@ -33,4 +34,17 @@ public class DietaController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(novaDieta);
     }
+
+
+    @GetMapping
+    public ResponseEntity<List<DietaResponseDTO>> getDietasByPaciente(
+            @PathVariable Long pacienteId,
+            Authentication authentication) {
+
+        String nutricionistaUid = authentication.getName();
+        List<DietaResponseDTO> dietas = dietaService.findAllByPaciente(pacienteId, nutricionistaUid);
+
+        return ResponseEntity.ok(dietas);
+    }
+
 }

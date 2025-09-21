@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DietaService {
@@ -63,4 +65,21 @@ public class DietaService {
                 dieta.getPaciente().getId()
         );
     }
+
+
+    @Transactional(readOnly = true)
+    public List<DietaResponseDTO> findAllByPaciente(Long pacienteId, String nutricionistaUid) {
+        // 1. Valida se o nutricionista é dono do paciente. Se não for, uma exceção será lançada.
+        pacienteService.findEntityByIdAndUsuarioUid(pacienteId, nutricionistaUid);
+
+        // 2. Se a validação passar, busca as dietas associadas ao paciente.
+        List<Dieta> dietas = dietaRepository.findAllByPacienteId(pacienteId);
+
+        // 3. Converte a lista de entidades para uma lista de DTOs e a retorna.
+        return dietas.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+
 }

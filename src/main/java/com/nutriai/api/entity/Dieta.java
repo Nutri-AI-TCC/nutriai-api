@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "DIETAS", schema = "ADMIN")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Dieta {
@@ -32,4 +31,43 @@ public class Dieta {
     @JoinColumn(name = "ID_PACIENTE_DIETA", nullable = false)
     private Paciente paciente;
 
+    public String getNomeDocumento() {
+        return nomeDocumento;
+    }
+
+    public void setNomeDocumento(String nomeDocumento) {
+        this.nomeDocumento = nomeDocumento;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getArquivoUrl() {
+        return arquivoUrl;
+    }
+
+    public void setArquivoUrl(String arquivoUrl) {
+        this.arquivoUrl = arquivoUrl;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public Paciente getPaciente() {
+        return paciente;
+    }
+
+    public void setPaciente(Paciente paciente) {
+        this.paciente = paciente;
+    }
 }
