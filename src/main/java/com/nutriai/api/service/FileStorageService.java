@@ -1,6 +1,7 @@
 package com.nutriai.api.service;
 
 import com.oracle.bmc.objectstorage.ObjectStorage;
+import com.oracle.bmc.objectstorage.requests.DeleteObjectRequest;
 import com.oracle.bmc.objectstorage.requests.PutObjectRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -51,4 +52,15 @@ public class FileStorageService {
 
         return fileName;
     }
+
+    public void delete(String objectName) {
+        DeleteObjectRequest request = DeleteObjectRequest.builder()
+                .namespaceName(namespace)
+                .bucketName(bucketName)
+                .objectName(objectName)
+                .build();
+
+        objectStorageClient.deleteObject(request);
+    }
+
 }

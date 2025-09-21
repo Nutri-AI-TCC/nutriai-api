@@ -2,18 +2,22 @@ package com.nutriai.api.controller;
 
 import com.nutriai.api.dto.chat.ChatResponseDTO;
 import com.nutriai.api.dto.chat.CreateChatDTO;
+import com.nutriai.api.dto.dieta.DietaResponseDTO;
 import com.nutriai.api.dto.paciente.CreatePacienteDTO;
 import com.nutriai.api.dto.paciente.PacienteResponseDTO;
 import com.nutriai.api.dto.paciente.UpdatePacienteDTO;
 import com.nutriai.api.service.ChatService;
+import com.nutriai.api.service.DietaService;
 import com.nutriai.api.service.PacienteService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -23,10 +27,12 @@ public class PacienteController {
 
     private final PacienteService pacienteService;
     private final ChatService chatService;
+    private final DietaService dietaService;
 
-    public PacienteController(PacienteService pacienteService, ChatService chatService) {
+    public PacienteController(PacienteService pacienteService, ChatService chatService, DietaService dietaService) {
         this.pacienteService = pacienteService;
         this.chatService = chatService;
+        this.dietaService = dietaService;
     }
 
     /**
@@ -84,4 +90,42 @@ public class PacienteController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{pacienteId}/dietas")
+    public ResponseEntity<DietaResponseDTO> createDieta(
+            @PathVariable Long pacienteId,
+            @RequestParam("nomeDocumento") String nomeDocumento,
+            @RequestParam("arquivo") MultipartFile arquivo,
+            Authentication authentication) throws IOException {
+
+        String nutricionistaUid = authentication.getName();
+        DietaResponseDTO novaDieta = dietaService.create(pacienteId, nutricionistaUid, nomeDocumento, arquivo);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(novaDieta);
+    }
+
+    @GetMapping("/{pacienteId}/dietas")
+    public ResponseEntity<List<DietaResponseDTO>> getDietasByPaciente(
+            @PathVariable Long pacienteId,
+            Authentication authentication) {
+
+        String nutricionistaUid = authentication.getName();
+        List<DietaResponseDTO> dietas = dietaService.findAllByPaciente(pacienteId, nutricionistaUid);
+
+        return ResponseEntity.ok(dietas);
+    }
+
+    @DeleteMapping("/{pacienteId}/dietas/{dietaId}")
+    public ResponseEntity<Void> deleteDieta(
+            @PathVariable Long pacienteId,
+            @PathVariable Long dietaId,
+            Authentication authentication) {
+
+        String nutricionistaUid = authentication.getName();
+
+        dietaService.delete(pacienteId, dietaId, nutricionistaUid);
+
+        return ResponseEntity.noContent().build();
+    }
+
 }

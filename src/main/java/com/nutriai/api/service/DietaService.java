@@ -3,8 +3,10 @@ package com.nutriai.api.service;
 import com.nutriai.api.dto.dieta.DietaResponseDTO;
 import com.nutriai.api.entity.Dieta;
 import com.nutriai.api.entity.Paciente;
+import com.nutriai.api.exception.ResourceNotFoundException;
 import com.nutriai.api.repository.DietaRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -79,6 +81,40 @@ public class DietaService {
         return dietas.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void delete(Long pacienteId, Long dietaId, String nutricionistaUid) {
+        // 1. Valida se o nutricionista é dono do paciente.
+        // Isso também confirma que o paciente existe.
+        pacienteService.findEntityByIdAndUsuarioUid(pacienteId, nutricionistaUid);
+
+        // 2. Busca a dieta no banco de dados.
+        Dieta dieta = dietaRepository.findById(dietaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Dieta não encontrada com o ID: " + dietaId));
+
+        // 3. ✨ NOVA VALIDAÇÃO: Verifica se a dieta realmente pertence ao paciente da URL.
+        if (!dieta.getPaciente().getId().equals(pacienteId)) {
+            throw new AccessDeniedException("Esta dieta não pertence ao paciente informado.");
+        }
+
+        // O restante da lógica de exclusão do arquivo e do registro permanece o mesmo...
+
+        // 4. Extrai o nome do objeto da URL para deletar do bucket.
+        String arquivoUrl = dieta.getArquivoUrl();
+        if (arquivoUrl != null && !arquivoUrl.isBlank()) {
+            try {
+                String objectName = arquivoUrl.substring(arquivoUrl.lastIndexOf("/o/") + 3);
+                fileStorageService.delete(objectName);
+            } catch (Exception e) {
+                // É uma boa prática logar o erro em vez de apenas imprimir no console
+                // logger.error("Falha ao deletar arquivo do Object Storage: {}", e.getMessage());
+                System.err.println("Falha ao deletar arquivo do Object Storage: " + e.getMessage());
+            }
+        }
+
+        // 5. Deleta o registro da dieta no banco de dados.
+        dietaRepository.delete(dieta);
     }
 
 
