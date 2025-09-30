@@ -665,17 +665,15 @@ Este endpoint permite que um nutricionista autenticado registre um novo paciente
 -   **`201 Created`** - Se o paciente for criado e associado ao nutricionista com sucesso.
     ```json
     {
-        "id": 1,
         "nome": "Carlos Andrade",
         "nascimento": "1985-05-20",
-        "peso": 85.50,
+        "peso": 85.5,
         "altura": 1.78,
-        "ativo": true,
-        "usuario": {
-            "uid": "UID_DO_NUTRICIONISTA_LOGADO",
-            "nome": "Nome do Nutricionista",
-            "email": "email@nutricionista.com"
-        }
+        "cnpjCpf": "111.222.333-44",
+        "alergias": "Alergia a amendoim e camarão.",
+        "comorbidades": "Hipertensão arterial leve.",
+        "medicacoes": "Losartana 50mg, uma vez ao dia.",
+        "ativo": true
     }
     ```
 -   **`400 Bad Request`** - Se os dados enviados na requisição forem inválidos.
@@ -713,11 +711,9 @@ Este endpoint retorna uma lista de todos os pacientes associados ao nutricionist
             "peso": 85.50,
             "altura": 1.78,
             "ativo": true,
-            "usuario": {
-                "uid": "UID_DO_NUTRICIONISTA_LOGADO",
-                "nome": "Nome do Nutricionista",
-                "email": "email@nutricionista.com"
-            }
+            "comorbidades": "Hipertensão arterial leve.",
+            "medicacoes": "Losartana 50mg, uma vez ao dia.",
+            "cnpjCpf": "111.222.333-44"
         },
         {
             "id": 2,
@@ -726,11 +722,9 @@ Este endpoint retorna uma lista de todos os pacientes associados ao nutricionist
             "peso": 62.00,
             "altura": 1.65,
             "ativo": true,
-            "usuario": {
-                "uid": "UID_DO_NUTRICIONISTA_LOGADO",
-                "nome": "Nome do Nutricionista",
-                "email": "email@nutricionista.com"
-            }
+            "comorbidades": "Nenhuma.",
+            "medicacoes": "Nenhuma.",
+            "cnpjCpf": "555.666.777-88"
         }
     ]
     ```
@@ -774,11 +768,7 @@ Este endpoint retorna os dados detalhados de um paciente específico, desde que 
         "ativo": true,
         "comorbidades": "Hipertensão arterial controlada.",
         "medicacoes": "Losartana 50mg, uma vez ao dia de manhã.",
-        "usuario": {
-            "uid": "UID_DO_NUTRICIONISTA_LOGADO",
-            "nome": "Nome do Nutricionista",
-            "email": "email@nutricionista.com"
-        }
+        "cnpjCpf": "111.222.333-44"
     }
     ```
 -   **`401 Unauthorized`** - Se o `idToken` estiver ausente, for inválido ou expirado.
@@ -856,11 +846,9 @@ Este endpoint permite que o usuário autenticado atualize os dados de um pacient
         "peso": 82.50,
         "altura": 1.79,
         "ativo": true,
-        "usuario": {
-            "uid": "UID_DO_NUTRICIONISTA_LOGADO",
-            "nome": "Nome do Nutricionista",
-            "email": "email@nutricionista.com"
-        }
+        "comorbidades": "Hipertensão arterial controlada.",
+        "medicacoes": "Losartana 50mg, uma vez ao dia de manhã.",
+        "cnpjCpf": "111.222.333-44"
     }
     ```
 -   **`400 Bad Request`** - Se os dados enviados no corpo da requisição forem inválidos.
