@@ -15,6 +15,6 @@ public record PacienteResponseDTO(
         boolean ativo,
         String comorbidades,
         String medicacoes,
-        UsuarioSummaryDTO usuario
+        String cnpjCpf
 ) {
 }

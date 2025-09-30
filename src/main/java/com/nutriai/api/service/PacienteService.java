@@ -26,9 +26,7 @@ public class PacienteService {
         this.usuarioService = usuarioService;
     }
 
-    /**
-     * ✅ MÉTODO CREATE CORRIGIDO: Agora retorna DTO
-     */
+
     @Transactional
     public PacienteResponseDTO create(CreatePacienteDTO dto, String usuarioUid) {
         Usuario nutricionista = usuarioService.findByUid(usuarioUid);
@@ -104,11 +102,6 @@ public class PacienteService {
     public PacienteResponseDTO convertToDto(Paciente paciente) {
         Usuario usuario = paciente.getUsuario();
 
-        UsuarioSummaryDTO usuarioDto = new UsuarioSummaryDTO(
-                usuario.getUid(),
-                usuario.getNome(),
-                usuario.getEmail()
-        );
 
         return new PacienteResponseDTO(
                 paciente.getId(),
@@ -119,7 +112,7 @@ public class PacienteService {
                 paciente.isAtivo(),
                 paciente.getComorbidades(),
                 paciente.getMedicacoes(),
-                usuarioDto
+                paciente.getCnpjCpf()
         );
     }
 }
