@@ -86,9 +86,15 @@ public class PacienteController {
             Authentication authentication) {
 
         String nutricionistaUid = authentication.getName();
-        chatService.create(dto, pacienteId, nutricionistaUid);
+        ChatResponseDTO responseDto = chatService.create(dto, pacienteId, nutricionistaUid);
 
-        return ResponseEntity.noContent().build();
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/api/v1/chats/{id}")
+                .buildAndExpand(responseDto.id())
+                .toUri();
+
+        return ResponseEntity.created(location).body(responseDto);
     }
 
     @PostMapping("/{pacienteId}/dietas")

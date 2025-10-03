@@ -34,15 +34,14 @@ public class ChatService {
 
     @Transactional
     public ChatResponseDTO create(CreateChatDTO dto, Long pacienteId, String nutricionistaUid) {
-        // ✅ UMA ÚNICA CHAMADA: Valida a posse e já retorna a entidade Paciente.
         Paciente paciente = pacienteService.findEntityByIdAndUsuarioUid(pacienteId, nutricionistaUid);
 
         Chat novoChat = new Chat();
         novoChat.setTitulo(dto.titulo());
         novoChat.setDataCriacao(LocalDateTime.now());
-        novoChat.setPaciente(paciente); // Usa a entidade retornada
+        novoChat.setPaciente(paciente);
 
-        Chat chatSalvo = chatRepository.save(novoChat);
+        Chat chatSalvo = chatRepository.saveAndFlush(novoChat);
 
         return convertToDto(chatSalvo);
     }

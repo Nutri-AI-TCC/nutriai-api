@@ -8,7 +8,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "CHATS", schema = "ADMIN")
-@Data
 public class Chat {
 
     @Id
@@ -33,4 +32,53 @@ public class Chat {
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Historico> historico;
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    public String getMensagemChat() {
+        return mensagemChat;
+    }
+
+    public void setMensagemChat(String mensagemChat) {
+        this.mensagemChat = mensagemChat;
+    }
+
+    public Paciente getPaciente() {
+        return paciente;
+    }
+
+    public void setPaciente(Paciente paciente) {
+        this.paciente = paciente;
+    }
+
+    public List<Historico> getHistorico() {
+        return historico;
+    }
+
+    public void setHistorico(List<Historico> historico) {
+        this.historico = historico;
+    }
 }
