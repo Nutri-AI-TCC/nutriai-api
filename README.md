@@ -364,28 +364,30 @@ Este endpoint cria um novo plano alimentar para um paciente específico, fazendo
 
 ---
 
-## 2. Listar Dietas de um Paciente
+### 2. Listar Dietas de um Paciente
 
 Este endpoint retorna uma lista com todos os planos alimentares associados a um paciente específico.
+
+> **Importante:** A `arquivoUrl` retornada é uma **Pre-Authenticated Request (PAR)**. Trata-se de um link de acesso **seguro e temporário** (com validade de 1 dia) que permite o download do arquivo de um bucket privado.
 
 - **Endpoint:** `/api/v1/pacientes/{pacienteId}/dietas`  
 - **Método:** `GET`
 
 ---
 
-### 🔹 Requisição
+#### 🔹 Requisição
 
 | Atributo            | Descrição                                                                 |
 |----------------------|---------------------------------------------------------------------------|
-| **URL**              | `/api/v1/pacientes/{pacienteId}/dietas`                                  |
+| **URL** | `/api/v1/pacientes/{pacienteId}/dietas`                                  |
 | **Parâmetros de URL**| `pacienteId` (**obrigatório**) - O ID numérico do paciente.              |
-| **Método**           | `GET`                                                                    |
-| **Cabeçalhos**       | `Authorization: Bearer <seu_idToken_obtido_no_login>`                    |
+| **Método** | `GET`                                                                    |
+| **Cabeçalhos** | `Authorization: Bearer <seu_idToken_obtido_no_login>`                    |
 | **Corpo da Requisição** | Nenhum                                                                |
 
 ---
 
-### 🔹 Respostas
+#### 🔹 Respostas
 
 - **200 OK** - Retorna uma lista com os DTOs das dietas.  
   **Exemplo de resposta:**
@@ -395,14 +397,14 @@ Este endpoint retorna uma lista com todos os planos alimentares associados a um 
   {
     "id": 1,
     "nomeDocumento": "Plano Alimentar - Setembro 2025",
-    "arquivoUrl": "https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/...",
+    "arquivoUrl": "[https://objectstorage.sa-saopaulo-1.oraclecloud.com/p/UNIQUE_ACCESS_SIGNATURE/n/seu-namespace/b/nutriai-arquivo-dieta/o/pacientes/82/dietas/arquivo-exemplo.pdf](https://objectstorage.sa-saopaulo-1.oraclecloud.com/p/UNIQUE_ACCESS_SIGNATURE/n/seu-namespace/b/nutriai-arquivo-dieta/o/pacientes/82/dietas/arquivo-exemplo.pdf)",
     "ativo": true,
     "pacienteId": 82
   },
   {
     "id": 2,
     "nomeDocumento": "Dieta de Reavaliação - Outubro 2025",
-    "arquivoUrl": "https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/...",
+    "arquivoUrl": "[https://objectstorage.sa-saopaulo-1.oraclecloud.com/p/ANOTHER_UNIQUE_SIGNATURE/n/seu-namespace/b/nutriai-arquivo-dieta/o/pacientes/82/dietas/outro-arquivo.pdf](https://objectstorage.sa-saopaulo-1.oraclecloud.com/p/ANOTHER_UNIQUE_SIGNATURE/n/seu-namespace/b/nutriai-arquivo-dieta/o/pacientes/82/dietas/outro-arquivo.pdf)",
     "ativo": true,
     "pacienteId": 82
   }
