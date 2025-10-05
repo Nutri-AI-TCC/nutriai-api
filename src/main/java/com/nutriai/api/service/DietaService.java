@@ -5,6 +5,7 @@ import com.nutriai.api.entity.Dieta;
 import com.nutriai.api.entity.Paciente;
 import com.nutriai.api.exception.ResourceNotFoundException;
 import com.nutriai.api.repository.DietaRepository;
+import com.oracle.bmc.objectstorage.model.CreatePreauthenticatedRequestDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,9 +81,37 @@ public class DietaService {
 
         // 3. Converte a lista de entidades para uma lista de DTOs e a retorna.
         return dietas.stream()
-                .map(this::convertToDto)
+                .map(dieta -> {
+                    // Pega o nome do objeto (o que está salvo como arquivoUrl)
+                    String objectName = extrairObjectNameDaUrl(dieta.getArquivoUrl());
+
+                    // Gera uma nova PAR com validade curta
+                    String temporaryAccessUrl = fileStorageService.createPreAuthenticatedRequest(
+                            this.bucketName,
+                            objectName,
+                            CreatePreauthenticatedRequestDetails.AccessType.ObjectRead,
+                            LocalDate.now().plusDays(1)
+                    );
+
+                    // Retorna o DTO com a URL segura e temporária
+                    return new DietaResponseDTO(
+                            dieta.getId(),
+                            dieta.getNomeDocumento(),
+                            temporaryAccessUrl, // <--- A URL gerada!
+                            dieta.isAtivo(),
+                            dieta.getPaciente().getId()
+                    );
+                })
                 .collect(Collectors.toList());
     }
+
+    private String extrairObjectNameDaUrl(String url) {
+        if (url == null || !url.contains("/o/")) {
+            return null;
+        }
+        return url.substring(url.indexOf("/o/") + 3);
+    }
+
 
     @Transactional
     public void delete(Long pacienteId, Long dietaId, String nutricionistaUid) {

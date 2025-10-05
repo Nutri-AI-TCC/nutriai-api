@@ -1,13 +1,19 @@
 package com.nutriai.api.service;
 
 import com.oracle.bmc.objectstorage.ObjectStorage;
+import com.oracle.bmc.objectstorage.model.CreatePreauthenticatedRequestDetails;
+import com.oracle.bmc.objectstorage.requests.CreatePreauthenticatedRequestRequest;
 import com.oracle.bmc.objectstorage.requests.DeleteObjectRequest;
 import com.oracle.bmc.objectstorage.requests.PutObjectRequest;
+import com.oracle.bmc.objectstorage.responses.CreatePreauthenticatedRequestResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -24,6 +30,9 @@ public class FileStorageService {
 
     @Value("${oci.objectstorage.bucket-name}")
     private String bucketName;
+
+    @Value("${oci.region}")
+    private String region;
 
     public FileStorageService(ObjectStorage objectStorageClient) {
         this.objectStorageClient = objectStorageClient;
@@ -62,5 +71,30 @@ public class FileStorageService {
 
         objectStorageClient.deleteObject(request);
     }
+
+    public String createPreAuthenticatedRequest(String bucketName, String objectName, CreatePreauthenticatedRequestDetails.AccessType accessType, LocalDate expirationDate) {
+
+        String parName = "par-" + objectName.replace("/", "-") + "-" + UUID.randomUUID();
+
+        CreatePreauthenticatedRequestDetails details = CreatePreauthenticatedRequestDetails.builder()
+                .name(parName)
+                .objectName(objectName)
+                .accessType(accessType)
+                .timeExpires(Date.from(expirationDate.atStartOfDay(ZoneId.systemDefault()).toInstant()))
+                .build();
+
+        CreatePreauthenticatedRequestRequest request = CreatePreauthenticatedRequestRequest.builder()
+                .namespaceName(this.namespace)
+                .bucketName(this.bucketName) // Usando o bucketName da classe
+                .createPreauthenticatedRequestDetails(details)
+                .build();
+
+        CreatePreauthenticatedRequestResponse response = objectStorageClient.createPreauthenticatedRequest(request);
+
+        String parUrl = "https://objectstorage." + region + ".oraclecloud.com" + response.getPreauthenticatedRequest().getAccessUri();
+
+        return parUrl;
+    }
+
 
 }
