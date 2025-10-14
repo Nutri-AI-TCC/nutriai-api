@@ -2,6 +2,7 @@ package com.nutriai.api.service;
 
 import com.nutriai.api.dto.chat.CreateChatDTO;
 import com.nutriai.api.dto.chat.HistoricoResponseDTO;
+import com.nutriai.api.dto.chat.UpdateChatDTO;
 import com.nutriai.api.entity.Chat;
 import com.nutriai.api.entity.Historico;
 import com.nutriai.api.entity.Paciente;
@@ -124,6 +125,29 @@ public class ChatService {
         // Graças ao @OneToMany(cascade = CascadeType.ALL) na entidade Chat,
         // ao deletar o chat, o JPA automaticamente deletará todas as mensagens (Historico) associadas.
         chatRepository.delete(chat);
+    }
+
+
+    //Atualiza o título de uma sessão de chat
+    @Transactional
+    public ChatResponseDTO update(Long chatId, String nutricionistaUid, UpdateChatDTO dto) {
+        // 1. Busca o chat pelo ID. Se não existir, lança uma exceção 404.
+        Chat chat = chatRepository.findById(chatId)
+                .orElseThrow(() -> new ResourceNotFoundException("Chat não encontrado com o ID: " + chatId));
+
+        // 2. VERIFICAÇÃO DE POSSE: Garante que o chat pertence ao usuário logado.
+        if (!chat.getPaciente().getUsuario().getUid().equals(nutricionistaUid)) {
+            throw new AccessDeniedException("Você não tem permissão para alterar este chat.");
+        }
+
+        // 3. Atualiza o título do chat.
+        chat.setTitulo(dto.titulo());
+
+        // 4. Salva as alterações no banco de dados.
+        Chat chatAtualizado = chatRepository.save(chat);
+
+        // 5. Converte a entidade atualizada para DTO e a retorna.
+        return convertToDto(chatAtualizado);
     }
 
 

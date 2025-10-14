@@ -2,7 +2,9 @@ package com.nutriai.api.controller;
 
 import com.nutriai.api.dto.chat.ChatResponseDTO;
 import com.nutriai.api.dto.chat.HistoricoResponseDTO;
+import com.nutriai.api.dto.chat.UpdateChatDTO;
 import com.nutriai.api.service.ChatService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -60,6 +62,23 @@ public class ChatController {
 
         // Retorna o status 204 No Content, o padrão para DELETE bem-sucedido.
         return ResponseEntity.noContent().build();
+    }
+
+    //Atualiza o título de uma sessão de chat específica.
+    @PutMapping("/{chatId}")
+    public ResponseEntity<ChatResponseDTO> updateChat(
+            @PathVariable Long chatId,
+            @RequestBody @Valid UpdateChatDTO dto,
+            Authentication authentication) {
+
+        // Pega o UID do nutricionista logado.
+        String nutricionistaUid = authentication.getName();
+
+        // Chama o serviço para realizar a atualização.
+        ChatResponseDTO chatAtualizado = chatService.update(chatId, nutricionistaUid, dto);
+
+        // Retorna o chat atualizado no corpo da resposta.
+        return ResponseEntity.ok(chatAtualizado);
     }
 
 

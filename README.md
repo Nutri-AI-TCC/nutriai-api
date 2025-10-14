@@ -1049,10 +1049,57 @@ Este endpoint permite que o usuário autenticado exclua permanentemente uma sess
 
 ---
 
+### 5. Atualizar o Título de um Chat Específico (Rota Protegida)
+
+Este endpoint permite que o usuário autenticado atualize o título de uma sessão de chat que lhe pertence.
+
+
+-   **Endpoint:** `PUT /api/v1/chats/{chatId}`
+-   **Método:** `PUT`
+
+
+### Requisição
+
+| Atributo | Descrição |
+|-----------|------------|
+| **URL** | `/api/v1/chats/{chatId}` |
+| **Parâmetros de URL** | `chatId` (**obrigatório**): O ID numérico do chat a ser atualizado. |
+| **Método** | `PUT` |
+| **Cabeçalhos** | `Content-Type: application/json`<br>`Authorization: Bearer <seu_idToken_obtido_no_login>` |
+
+---
+
+### Corpo da Requisição (JSON)
+
+    ```json
+{
+  "titulo": "Novo Título do Chat - Reavaliação Mensal"
+}
+    ```
+
+### Respostas
+
+**200 OK** - Se o chat for atualizado com sucesso. O corpo da resposta contém os dados atualizados.
+
+**JSON**
+
+    ```json
+{
+    "id": 362,
+    "titulo": "Novo Título do Chat - Reavaliação Mensal",
+    "dataCriacao": "2025-09-30T19:15:45.123456",
+    "pacienteId": 161
+}
+    ```
+
+**400 Bad Request** - Se o titulo no corpo da requisição estiver em branco.
+
+**401 Unauthorized** - Se o idToken for inválido ou ausente.
+
+**403 Forbidden** - Se o chat não pertencer ao nutricionista autenticado.
+
+**404 Not Found** - Se o chat com o chatId informado não existir.
+
+
 
 ## ⏭️ Próximos Passos
-[ ] Implementar a lógica de negócio no DietaService.
-
-[ ] Desenvolver os endpoints de CRUD para Planos Alimentares.
-
-[ ] Upload e armazenamento de documentos de pacientes no object storage (Bucket) da oracle
