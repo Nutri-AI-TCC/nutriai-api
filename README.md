@@ -707,23 +707,25 @@ Este endpoint retorna uma lista de todos os pacientes associados ao nutricionist
     ```json
     [
         {
-            "id": 1,
-            "nome": "Carlos Andrade",
+            "id": 82,
+            "nome": "Carlos Andrade da Silva",
             "nascimento": "1985-05-20",
-            "peso": 85.50,
-            "altura": 1.78,
+            "peso": 82.50,
+            "altura": 1.79,
             "ativo": true,
-            "comorbidades": "Hipertensão arterial leve.",
-            "medicacoes": "Losartana 50mg, uma vez ao dia.",
+            "alergias": "Alergia a amendoim e camarão.",
+            "comorbidades": "Hipertensão arterial controlada.",
+            "medicacoes": "Losartana 50mg, uma vez ao dia de manhã.",
             "cnpjCpf": "111.222.333-44"
         },
         {
-            "id": 2,
+            "id": 83,
             "nome": "Juliana Ribeiro",
             "nascimento": "1992-11-10",
             "peso": 62.00,
             "altura": 1.65,
             "ativo": true,
+            "alergias": "Nenhuma conhecida.",
             "comorbidades": "Nenhuma.",
             "medicacoes": "Nenhuma.",
             "cnpjCpf": "555.666.777-88"
@@ -770,7 +772,8 @@ Este endpoint retorna os dados detalhados de um paciente específico, desde que 
         "ativo": true,
         "comorbidades": "Hipertensão arterial controlada.",
         "medicacoes": "Losartana 50mg, uma vez ao dia de manhã.",
-        "cnpjCpf": "111.222.333-44"
+        "cnpjCpf": "111.222.333-44",
+        "alergias": "Alergia a amendoim e camarão."
     }
     ```
 -   **`401 Unauthorized`** - Se o `idToken` estiver ausente, for inválido ou expirado.

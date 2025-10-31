@@ -13,6 +13,7 @@ public record PacienteResponseDTO(
         BigDecimal peso,
         BigDecimal altura,
         boolean ativo,
+        String alergias,
         String comorbidades,
         String medicacoes,
         String cnpjCpf
