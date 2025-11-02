@@ -1,6 +1,7 @@
 package com.nutriai.api.service;
 
 import com.nutriai.api.dto.dieta.DietaResponseDTO;
+import com.nutriai.api.dto.dieta.UpdateDietaDTO;
 import com.nutriai.api.entity.Dieta;
 import com.nutriai.api.entity.Paciente;
 import com.nutriai.api.exception.ResourceNotFoundException;
@@ -146,6 +147,35 @@ public class DietaService {
         // 5. Deleta o registro da dieta no banco de dados.
         dietaRepository.delete(dieta);
     }
+
+    @Transactional
+    public DietaResponseDTO updateNomeDocumento(Long pacienteId, Long dietaId, String nutricionistaUid, UpdateDietaDTO dto) {
+        // 1. Valida se o nutricionista é dono do paciente
+        pacienteService.findEntityByIdAndUsuarioUid(pacienteId, nutricionistaUid);
+
+        // 2. Busca a dieta
+        Dieta dieta = dietaRepository.findById(dietaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Dieta não encontrada com o ID: " + dietaId));
+
+        // 3. Valida se a dieta pertence ao paciente
+        if (!dieta.getPaciente().getId().equals(pacienteId)) {
+            throw new AccessDeniedException("Esta dieta não pertence ao paciente informado.");
+        }
+
+        // 4. ATUALIZA O NOME
+        dieta.setNomeDocumento(dto.nomeDocumento());
+        Dieta dietaSalva = dietaRepository.save(dieta);
+
+        // 5. Retorna o DTO
+        return new DietaResponseDTO(
+                dietaSalva.getId(),
+                dietaSalva.getNomeDocumento(),
+                dietaSalva.getArquivoUrl(),
+                dietaSalva.isAtivo(),
+                dietaSalva.getPaciente().getId()
+        );
+    }
+
 
 
 }

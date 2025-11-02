@@ -3,7 +3,6 @@ package com.nutriai.api.service;
 import com.nutriai.api.dto.paciente.CreatePacienteDTO;
 import com.nutriai.api.dto.paciente.PacienteResponseDTO;
 import com.nutriai.api.dto.paciente.UpdatePacienteDTO;
-import com.nutriai.api.dto.usuario.UsuarioSummaryDTO;
 import com.nutriai.api.entity.Paciente;
 import com.nutriai.api.entity.Usuario;
 import com.nutriai.api.exception.ResourceNotFoundException;
@@ -63,9 +62,7 @@ public class PacienteService {
         return convertToDto(paciente);
     }
 
-    /**
-     * ✅ MÉTODO UPDATE CORRIGIDO: Chama o método de busca correto
-     */
+
     @Transactional
     public PacienteResponseDTO update(Long pacienteId, String usuarioUid, UpdatePacienteDTO dto) {
         // Busca a entidade e já valida a posse
@@ -100,7 +97,7 @@ public class PacienteService {
     }
 
     public PacienteResponseDTO convertToDto(Paciente paciente) {
-        Usuario usuario = paciente.getUsuario();
+        //Usuario usuario = paciente.getUsuario();
 
 
         return new PacienteResponseDTO(

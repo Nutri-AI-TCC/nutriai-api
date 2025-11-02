@@ -3,6 +3,7 @@ package com.nutriai.api.controller;
 import com.nutriai.api.dto.chat.ChatResponseDTO;
 import com.nutriai.api.dto.chat.CreateChatDTO;
 import com.nutriai.api.dto.dieta.DietaResponseDTO;
+import com.nutriai.api.dto.dieta.UpdateDietaDTO;
 import com.nutriai.api.dto.paciente.CreatePacienteDTO;
 import com.nutriai.api.dto.paciente.PacienteResponseDTO;
 import com.nutriai.api.dto.paciente.UpdatePacienteDTO;
@@ -132,6 +133,19 @@ public class PacienteController {
         dietaService.delete(pacienteId, dietaId, nutricionistaUid);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{pacienteId}/dietas/{dietaId}")
+    public ResponseEntity<DietaResponseDTO> updateNomeDieta(
+            @PathVariable Long pacienteId,
+            @PathVariable Long dietaId,
+            @Valid @RequestBody UpdateDietaDTO dto,
+            Authentication authentication) {
+
+        String nutricionistaUid = authentication.getName();
+        DietaResponseDTO dietaAtualizada = dietaService.updateNomeDocumento(pacienteId, dietaId, nutricionistaUid, dto);
+
+        return ResponseEntity.ok(dietaAtualizada);
     }
 
 }
