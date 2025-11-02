@@ -249,8 +249,8 @@ Este endpoint troca um `refreshToken` válido por um novo `idToken`.
 -   **`200 OK`** - Se o token for renovado com sucesso.
     ```json
     {
-    "idToken": "eyJhbGciOi... (o novo idToken)",
-    "refreshToken": "AMf-vBw... (o novo refreshToken)"
+        "idToken": "eyJhbGciOi... (o novo idToken)",
+        "refreshToken": "AMf-vBw... (o novo refreshToken)"
     }
     ```
 -   **`401 Unauthorized`** - Se o `refreshToken` for inválido ou expirado.
@@ -442,6 +442,49 @@ Este endpoint permite que o usuário autenticado exclua permanentemente um plano
 -   **`401 Unauthorized`** - Se o `idToken` for inválido ou ausente.
 -   **`403 Forbidden`** - Se o paciente ou a dieta não pertencer ao nutricionista autenticado.
 -   **`404 Not Found`** - Se a dieta com o `dietaId` informado não existir.
+
+---
+
+### 4. Atualizar Nome de uma Dieta (Rota Protegida)
+
+Este endpoint permite que o usuário autenticado altere o nome "amigável" (`nomeDocumento`) de um plano alimentar existente. Esta operação **não** renomeia o arquivo físico no bucket, apenas a referência no banco de dados.
+
+-   **Endpoint:** `PATCH /api/v1/pacientes/{pacienteId}/dietas/{dietaId}`
+-   **Método:** `PATCH`
+
+#### Requisição
+
+| Atributo | Descrição |
+| :--- | :--- |
+| **URL** | `/api/v1/pacientes/{pacienteId}/dietas/{dietaId}` |
+| **Parâmetros de URL** | `pacienteId` (obrigatório): O ID do paciente.<br>`dietaId` (obrigatório): O ID da dieta a ser atualizada. |
+| **Método** | `PATCH` |
+| **Cabeçalhos**| `Content-Type: application/json`<br>`Authorization: Bearer <seu_idToken_obtido_no_login>` |
+
+**Corpo da Requisição (JSON):**
+```json
+{
+  "nomeDocumento": "Plano Alimentar - Reavaliação Outubro 2025"
+}
+
+ ```
+
+ ##### Respostas
+
+- **`200 OK`** - Se o nome for atualizado com sucesso. O corpo da resposta contém os dados atualizados.
+  ```json
+    {
+        "id": 1,
+        "nomeDocumento": "Plano Alimentar - Reavaliação Outubro 2025",
+        "arquivoUrl": "https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/seu-namespace/b/nutriai-arquivo-dieta/o/pacientes/82/dietas/uuid-aleatorio-dieta_exemplo.pdf",
+        "ativo": true,
+        "pacienteId": 82
+    }
+  ```
+-   **`400 Bad Request`** - Se o nomeDocumento no corpo da requisição estiver em branco.
+-   **`401 Unauthorized`** - Se o `idToken` for inválido ou ausente.
+-   **`403 Forbidden`** - Se a dieta ou o paciente não pertencer ao nutricionista autenticado.
+-   **`404 Not Found`** - Se a dieta com o dietaId informado não existir.
 
 ---
 
